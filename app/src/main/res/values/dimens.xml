@@ -1,0 +1,5 @@
+<resources>
+    <dimen name="dp_30">30dp</dimen>
+    <dimen name="activity_title">20dp</dimen>
+
+</resources>

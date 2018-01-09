@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">jetsenCloud</string>
+    <string name="download_resource">备课资源-下载</string>
 </resources>
