@@ -90,11 +90,11 @@ public final class DatabaseObject {
 
         public static String DROP_SQL = "drop table if exists " + CourseStandardTree + ";";
 
-        public static ContentValues getContentValues(int book_id, int id, String name,String child) {
+        public static ContentValues getContentValues(int book_id, int id, String description,String child) {
             ContentValues values = new ContentValues();
             values.put(tree_book_id, book_id);
             values.put(tree_id, id);
-            values.put(tree_description, name);
+            values.put(tree_description, description);
             values.put(tree_child,child);
             return values;
         }

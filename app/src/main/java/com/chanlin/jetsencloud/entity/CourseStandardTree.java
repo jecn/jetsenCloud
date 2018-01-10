@@ -9,7 +9,7 @@ package com.chanlin.jetsencloud.entity;
 public class CourseStandardTree {
     private int book_id;
     private int id;
-    private String name;
+    private String description;
     private String child;
 
     public int getBook_id() {
@@ -28,12 +28,12 @@ public class CourseStandardTree {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getChild() {
@@ -49,7 +49,7 @@ public class CourseStandardTree {
         return "CourseStandardTree{" +
                 "book_id=" + book_id +
                 ", id=" + id +
-                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
                 ", child='" + child + '\'' +
                 '}';
     }

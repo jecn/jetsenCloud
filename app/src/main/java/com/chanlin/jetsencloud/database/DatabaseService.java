@@ -96,7 +96,7 @@ public class DatabaseService {
     /**
      * 存课标树数据
      */
-    public static boolean createBook(int book_id, int id, String name,String child){
+    public static boolean createCourseTree(int book_id, int id, String description,String child){
         String where_cause = DatabaseObject.CourseStandardTreeTable.tree_book_id
                 + " =? and "
                 + DatabaseObject.CourseStandardTreeTable.tree_id
@@ -109,13 +109,13 @@ public class DatabaseService {
                     where_args,null);
             if (cursor != null && cursor.moveToFirst()) {
                 DatabaseUtils.updateRecordFromTable(DatabaseObject.CourseStandardTree,null,
-                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, name,child),
+                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,child),
                         where_cause,where_args);
                 Log.i(TAG, "createBook update");
                 return true;
             }else {
                 DatabaseUtils.insertRecordIntoTable(
-                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, name,child),
+                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,child),
                         DatabaseObject.CourseStandardTree,null);
                 Log.i(TAG, "createBook insertRecordIntoTable");
                 return true;

@@ -25,7 +25,7 @@ public class BookTask extends BaseTask {
     @Override
     public void onSuccess(String result_json) {
         if (null != mMainHandler){
-            Message success = mMainHandler.obtainMessage(MessageConfig.COMMON_http_success_MESSAGE);
+            Message success = mMainHandler.obtainMessage(MessageConfig.book_http_success_MESSAGE);
             success.obj = result_json;
             success.sendToTarget();
         }
@@ -34,7 +34,7 @@ public class BookTask extends BaseTask {
     @Override
     public void onFalse(String result_json) {
         if (null != mMainHandler){
-            Message success = mMainHandler.obtainMessage(MessageConfig.COMMON_http_false_MESSAGE);
+            Message success = mMainHandler.obtainMessage(MessageConfig.book_http_false_MESSAGE);
             success.obj = result_json;
             success.sendToTarget();
         }
@@ -43,7 +43,7 @@ public class BookTask extends BaseTask {
     @Override
     public void onException() {
         if (null != mMainHandler){
-            Message success = mMainHandler.obtainMessage(MessageConfig.COMMON_http_exception_MESSAGE);
+            Message success = mMainHandler.obtainMessage(MessageConfig.book_http_exception_MESSAGE);
             success.sendToTarget();
         }
     }

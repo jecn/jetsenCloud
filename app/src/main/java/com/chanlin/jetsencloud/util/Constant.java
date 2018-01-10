@@ -23,6 +23,14 @@ public class Constant {
     public static String k12tokenValue = null;
 
     public static final String code_book_list = "teaching/book_list";
+    public static final String code_course_standard_tree = "teaching/course_standard_tree";
+
+    public static final String code_resource_list = "teaching/resource_list";
+
+    public static final String code_question_period_list = "teaching/question_period_list";
+
+    public static final String code_question_period_details = "teaching/question_period_details";
+
 
 
 }
