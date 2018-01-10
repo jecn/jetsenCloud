@@ -292,7 +292,7 @@ public class DatabaseService {
                 CourseStandardTree book = new CourseStandardTree();
                 book.setBook_id(tree_book_id);
                 book.setId(cursor.getInt(1));
-                book.setName(cursor.getString(2));
+                book.setDescription(cursor.getString(2));
                 book.setChild(cursor.getString(3));
                 bookList.add(book);
                 LogUtil.showInfo("database", "findCourseStandardTreeList:"+bookList.toString());

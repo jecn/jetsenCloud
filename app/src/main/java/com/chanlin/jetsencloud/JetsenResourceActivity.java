@@ -51,8 +51,12 @@ public class JetsenResourceActivity extends FragmentActivity {
                     try {
                         //解析json
                         mybooks = JsonSuccessUtil.getBookList(Integer.parseInt(courseId), (String)msg.obj);
-                        //刷新数据
-                        initData();
+                        if (mybooks != null && mybooks.size() > 0){
+                            thisBook = mybooks.get(0);//默认选中第一条
+                            //刷新数据
+                            initData();
+                            courseStandardController.getCourseStandardList(thisBook.getId());
+                        }
                     }catch (JSONException e){
                         mHandler.sendEmptyMessage(MessageConfig.book_http_exception_MESSAGE);
                         e.printStackTrace();
@@ -117,7 +121,7 @@ public class JetsenResourceActivity extends FragmentActivity {
         //frameLayout_content.setVisibility(View.GONE);
         //如果没获取到则要到网络上获取数据
         bookController.getBookList(mHandler,courseId);
-        courseStandardController.getCourseStandardList(thisBook.getId());
+
 
     }
 }
