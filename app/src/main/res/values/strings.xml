@@ -3,4 +3,7 @@
     <string name="download_resource">备课资源-下载</string>
 
     <string name="http_exception">网络请求失败</string>
+
+    <string name="common_overview">备课课件</string>
+    <string name="common_data">习题课</string>
 </resources>

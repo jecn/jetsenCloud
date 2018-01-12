@@ -34,6 +34,8 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/ll_book_name"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:paddingTop="@dimen/dp_10"
+                android:paddingBottom="@dimen/dp_10"
                 android:layout_weight="1"
                 android:orientation="vertical">
                 <RelativeLayout
@@ -50,15 +52,20 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@mipmap/ic_launcher"
+                        android:layout_marginLeft="20dp"
+                        android:src="@mipmap/img_right"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@id/tv_book_name"/>
 
                 </RelativeLayout>
                 <View
-                    android:background="@color/colorPrimaryDark"
+                    android:background="@color/colorTitle"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/fileRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
             </LinearLayout>
 
             <View
@@ -69,7 +76,9 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:orientation="vertical"
                 android:layout_weight="1">
+                <include layout="@layout/activity_main_top_tab" />
                 <com.chanlin.jetsencloud.view.CustomViewPager
                     android:id="@+id/motion_view_pager"
                     android:layout_width="match_parent"

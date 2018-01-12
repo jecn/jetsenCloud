@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -30,19 +31,19 @@ public class DatabaseProvider extends ContentProvider {
     private static final int QuestionPeriodDetail = 5;
 
     static {
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.UserInfo + "/*", UserInfo);
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.Book + "/*", Book);
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.CourseStandardTree + "/*", CourseStandardTree);
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.ResourceTree + "/*", ResourceTree);
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.QuestionPeriod + "/*", QuestionPeriod);
-        sURLMatcher.addURI(AUTHOR, DatabaseObject.QuestionPeriodDetail + "/*", QuestionPeriodDetail);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.UserInfo + "", UserInfo);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.Book + "", Book);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.CourseStandardTree + "", CourseStandardTree);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.ResourceTree + "", ResourceTree);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.QuestionPeriod + "", QuestionPeriod);
+        sURLMatcher.addURI(AUTHOR, DatabaseObject.QuestionPeriodDetail + "", QuestionPeriodDetail);
     }
     private DatabaseOpenHelper dbOpenHelper;
     @Override
     public boolean onCreate() {
         Log.e(TAG,"onCreate");
         dbOpenHelper = DatabaseOpenHelper.getInstance(getContext());
-        //DatabaseUtils.setAppContext(getContext());
+        DatabaseUtils.setAppContext(getContext());
         return true;
     }
 
@@ -59,27 +60,21 @@ public class DatabaseProvider extends ContentProvider {
         switch (result) {
             case UserInfo:
                 table = DatabaseObject.UserInfo;
-                where = createWhere(DatabaseObject.UserInfoTable.user_teacher_id, uri);
                 break;
             case Book:
                 table = DatabaseObject.Book;
-                where = createWhere(DatabaseObject.bookTable.course_id, uri);
                 break;
             case CourseStandardTree:
                 table = DatabaseObject.CourseStandardTree;
-                where = createWhere(DatabaseObject.CourseStandardTreeTable.tree_book_id, uri);
                 break;
             case ResourceTree:
                 table = DatabaseObject.ResourceTree;
-                where = createWhere(DatabaseObject.ResourceTreeTable.resource_course_standard_id, uri);
                 break;
             case QuestionPeriod:
                 table = DatabaseObject.QuestionPeriod;
-                where = createWhere(DatabaseObject.QuestionPeriodTable.question_period_course_standard_id, uri);
                 break;
             case QuestionPeriodDetail:
                 table = DatabaseObject.QuestionPeriodDetail;
-                where = createWhere(DatabaseObject.QuestionPeriodDetailTable.detail_question_period_id, uri);
                 break;
             default:
                 throw new IllegalStateException("Unrecognized URI:" + uri);

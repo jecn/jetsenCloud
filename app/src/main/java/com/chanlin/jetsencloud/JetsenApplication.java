@@ -3,6 +3,7 @@ package com.chanlin.jetsencloud;
 import android.app.Application;
 import android.content.Context;
 
+import com.chanlin.jetsencloud.util.Utils;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -19,6 +20,7 @@ public class JetsenApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Utils.init(this);
         initImageLoader(this);
     }
     private void initImageLoader(Context context) {

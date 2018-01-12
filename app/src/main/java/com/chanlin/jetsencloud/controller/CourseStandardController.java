@@ -33,6 +33,14 @@ public class CourseStandardController {
         this(context,handler, Constant.Host);
     }
 
+    /**
+     * 本地数据库获取数据
+     */
+
+    /**
+     * 网络获取 资源数据
+     * @param bookId
+     */
     public void getCourseStandardList(int bookId){
             OkHttpClient mOkHttpClient = OKHttpUtil.getInstanceHttpClient();
             String token = SystemShare.getSettingString(mContext,Constant.k12token);
@@ -47,7 +55,6 @@ public class CourseStandardController {
                     .addHeader(Constant.k12url,Constant.code_course_standard_tree)
                     .addHeader(Constant.k12code, code)
                     .addHeader(Constant.k12token, token)
-                    .headers(gd)
                     .build();
             //new call
             Call call = mOkHttpClient.newCall(request);
@@ -55,7 +62,7 @@ public class CourseStandardController {
                 @Override
                 public void onSuccess(String result_json) {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_success_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_success_MESSAGE);
                         success.obj = result_json;
                         success.sendToTarget();
                     }
@@ -63,7 +70,7 @@ public class CourseStandardController {
                 @Override
                 public void onFalse(String result_json) {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_false_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_false_MESSAGE);
                         success.obj = result_json;
                         success.sendToTarget();
                     }
@@ -71,7 +78,7 @@ public class CourseStandardController {
                 @Override
                 public void onException() {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_exception_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_exception_MESSAGE);
                         success.sendToTarget();
                     }
                 }

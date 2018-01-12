@@ -2,4 +2,5 @@
     <dimen name="dp_30">30dp</dimen>
     <dimen name="activity_title">20dp</dimen>
 
+    <dimen name="motion_position_text_size">14dp</dimen>
 </resources>

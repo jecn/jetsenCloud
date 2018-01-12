@@ -23,7 +23,7 @@ public final class DatabaseObject {
         public static final String[] projection = new String[]{
                 user_teacher_id,user_name,user_sex,user_avatar,user_school_name,user_clasies
         };
-        public static String CREATE_SQL = "create table if not exists" + UserInfo + "("
+        public static String CREATE_SQL = "create table if not exists " + UserInfo + "("
                 + user_teacher_id + " integer primary key,"
                 + user_name + " varchar(200),"
                 + user_sex + " integer,"
@@ -55,7 +55,7 @@ public final class DatabaseObject {
         public static final String[] projection = new String[]{
                 course_id,book_id,book_name
         };
-        public static String CREATE_SQL = "create table if not exists" + Book + "("
+        public static String CREATE_SQL = "create table if not exists " + Book + "("
                 + course_id + " integer,"
                 + book_id + " integer,"
                 + book_name + " varchar(200)"
@@ -77,25 +77,29 @@ public final class DatabaseObject {
         public static final String tree_book_id = "book_id";
         public static final String tree_id = "id";
         private static final String tree_description = "description";
-        private static final String tree_child = "child";//child 是个json集合类型;
+//        private static final String tree_child = "child";//child 是个json集合类型;
+        public static final String tree_parent_id = "parent_id";
+        private static final String tree_has_child = "has_child";
         public static final String[] projection = new String[]{
-                tree_book_id,tree_id,tree_description,tree_child
+                tree_book_id,tree_id,tree_description,tree_parent_id,tree_has_child
         };
-        public static String CREATE_SQL = "create table if not exists" + CourseStandardTree + "("
+        public static String CREATE_SQL = "create table if not exists " + CourseStandardTree + "("
                 + tree_book_id + " integer,"
                 + tree_id + " integer,"
                 + tree_description + " varchar(200),"
-                + tree_child + " TEXT"
+                + tree_parent_id + " integer,"
+                + tree_has_child + " integer"
                 + ");";
 
         public static String DROP_SQL = "drop table if exists " + CourseStandardTree + ";";
 
-        public static ContentValues getContentValues(int book_id, int id, String description,String child) {
+        public static ContentValues getContentValues(int book_id, int id, String description,int parentId, int hasChild) {
             ContentValues values = new ContentValues();
             values.put(tree_book_id, book_id);
             values.put(tree_id, id);
             values.put(tree_description, description);
-            values.put(tree_child,child);
+            values.put(tree_parent_id,parentId);
+            values.put(tree_has_child,hasChild);
             return values;
         }
     }
@@ -112,11 +116,11 @@ public final class DatabaseObject {
         public static final String[] projection = new String[]{
                 resource_course_standard_id,resource_uuid,resource_key,resource_title,resource_size,resource_type,resource_file_url
         };
-        public static String CREATE_SQL = "create table if not exists" + ResourceTree + "("
+        public static String CREATE_SQL = "create table if not exists " + ResourceTree + "("
                 + resource_course_standard_id + " integer,"
                 + resource_uuid + " varchar(200),"
                 + resource_key + " varchar(200),"
-                + resource_title + " varchar(200)"
+                + resource_title + " varchar(200),"
                 + resource_size + " integer,"
                 + resource_type + " integer,"
                 + resource_file_url + " varchar(200)"
@@ -145,10 +149,10 @@ public final class DatabaseObject {
         public static final String[] projection = new String[]{
                 question_period_course_standard_id,question_period_id,question_period_title
         };
-        public static String CREATE_SQL = "create table if not exists" + QuestionPeriod + "("
+        public static String CREATE_SQL = "create table if not exists " + QuestionPeriod + "("
                 + question_period_course_standard_id + " integer,"
                 + question_period_id + " integer,"
-                + question_period_title + " varchar(200),"
+                + question_period_title + " varchar(200)"
                 + ");";
 
         public static String DROP_SQL = "drop table if exists " + QuestionPeriod + ";";
@@ -171,7 +175,7 @@ public final class DatabaseObject {
         public static final String[] projection = new String[]{
                 detail_question_period_id,detail_uuid,detail_key,detail_file_url
         };
-        public static final String CREATE_SQL = "create table if not exists" + QuestionPeriodDetail + "("
+        public static final String CREATE_SQL = "create table if not exists " + QuestionPeriodDetail + "("
                 + detail_question_period_id + " integer,"
                 + detail_uuid + " varchar(200),"
                 + detail_key + " varchar(200),"

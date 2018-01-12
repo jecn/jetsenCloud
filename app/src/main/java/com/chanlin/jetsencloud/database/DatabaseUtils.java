@@ -12,7 +12,7 @@ import android.text.TextUtils;
  * TODO:
  */
 
-public class DatabaseUtils {
+public final class DatabaseUtils {
     private static Context sContext;
 
     public static void setAppContext(Context ctx) {

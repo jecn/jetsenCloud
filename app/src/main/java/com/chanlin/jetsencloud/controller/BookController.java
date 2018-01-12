@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import com.chanlin.jetsencloud.http.CommonUtils;
 import com.chanlin.jetsencloud.http.HttpCallBack;
 import com.chanlin.jetsencloud.http.MessageConfig;
 import com.chanlin.jetsencloud.http.OKHttpUtil;
@@ -37,6 +38,9 @@ public class BookController {
 
     //get请求
     public void getBookList(final Handler mMainHandler, String bookId){
+        if(!CommonUtils.isNetworkAvailable(mContext)){
+            return;
+        }
         if (null != bookId){
             OkHttpClient mOkHttpClient = OKHttpUtil.getInstanceHttpClient();
             String token =SystemShare.getSettingString(mContext,Constant.k12token);
@@ -51,7 +55,6 @@ public class BookController {
                     .addHeader(Constant.k12url,Constant.code_book_list)
                     .addHeader(Constant.k12code, code)
                     .addHeader(Constant.k12token, token)
-                    .headers(gd)
                     .build();
             //new call
             Call call = mOkHttpClient.newCall(request);

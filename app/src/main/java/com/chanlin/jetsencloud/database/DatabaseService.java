@@ -96,7 +96,7 @@ public class DatabaseService {
     /**
      * 存课标树数据
      */
-    public static boolean createCourseTree(int book_id, int id, String description,String child){
+    public static boolean createCourseTree(int book_id, int id, String description,int parentId, int hasChild){
         String where_cause = DatabaseObject.CourseStandardTreeTable.tree_book_id
                 + " =? and "
                 + DatabaseObject.CourseStandardTreeTable.tree_id
@@ -109,13 +109,13 @@ public class DatabaseService {
                     where_args,null);
             if (cursor != null && cursor.moveToFirst()) {
                 DatabaseUtils.updateRecordFromTable(DatabaseObject.CourseStandardTree,null,
-                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,child),
+                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,parentId, hasChild),
                         where_cause,where_args);
                 Log.i(TAG, "createBook update");
                 return true;
             }else {
                 DatabaseUtils.insertRecordIntoTable(
-                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,child),
+                        DatabaseObject.CourseStandardTreeTable.getContentValues(book_id, id, description,parentId, hasChild),
                         DatabaseObject.CourseStandardTree,null);
                 Log.i(TAG, "createBook insertRecordIntoTable");
                 return true;
@@ -293,7 +293,9 @@ public class DatabaseService {
                 book.setBook_id(tree_book_id);
                 book.setId(cursor.getInt(1));
                 book.setDescription(cursor.getString(2));
-                book.setChild(cursor.getString(3));
+//                book.setChild(cursor.getString(3));
+                book.setParentId(cursor.getInt(3));
+                book.setHasChild(cursor.getInt(4));
                 bookList.add(book);
                 LogUtil.showInfo("database", "findCourseStandardTreeList:"+bookList.toString());
             }
@@ -308,6 +310,41 @@ public class DatabaseService {
         return bookList;
     }
 
+
+    public static ArrayList<CourseStandardTree> findCourseStandardTreeList(int tree_book_id,int parentId){
+        ArrayList<CourseStandardTree> bookList = new ArrayList<CourseStandardTree>();
+        LogUtil.showInfo(TAG,"findBookList tree_book_id="+tree_book_id);
+        String where_cause = DatabaseObject.CourseStandardTreeTable.tree_book_id
+                + " =? and "
+                + DatabaseObject.CourseStandardTreeTable.tree_parent_id
+                + " =? ";
+        String[] where_args = new String[] { String.valueOf(tree_book_id),String.valueOf(parentId)};
+        Cursor cursor=null;
+        try {
+            cursor=DatabaseUtils.getRecordsFromTable(DatabaseObject.CourseStandardTree,
+                    null, DatabaseObject.CourseStandardTreeTable.projection, where_cause,
+                    where_args, null);
+            while(cursor.moveToNext()){
+                CourseStandardTree book = new CourseStandardTree();
+                book.setBook_id(tree_book_id);
+                book.setId(cursor.getInt(1));
+                book.setDescription(cursor.getString(2));
+//                book.setChild(cursor.getString(3));
+                book.setParentId(cursor.getInt(3));
+                book.setHasChild(cursor.getInt(4));
+                bookList.add(book);
+                LogUtil.showInfo("database", "findCourseStandardTreeList:"+bookList.toString());
+            }
+            LogUtil.showInfo("database","findCourseStandardTreeList over:");
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.showInfo("database","findCourseStandardTreeList exception:");
+        }finally{
+            LogUtil.showInfo("database","findCourseStandardTreeList finally:");
+            if(cursor != null ) cursor.close();
+        }
+        return bookList;
+    }
 
     /**
      * 查资源列表
@@ -413,4 +450,6 @@ public class DatabaseService {
         }
         return bookList;
     }
+
+
 }
