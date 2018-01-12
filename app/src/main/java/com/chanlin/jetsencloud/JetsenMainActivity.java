@@ -44,7 +44,7 @@ public class JetsenMainActivity extends AppCompatActivity {
         //school_name = bd.getString("school_name");
         school_name = "K12开发学校01（高中）";
         name = "张飞";
-        String k12tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbiI6InRvYl9wYWQiLCJzY2hvb2xfY29kZSI6ImsxMnNjaG9vbF8wMV9kZXYiLCJ1c2VyX2lkIjoxMTA1MywiZXhwIjoxNTE1NzIwNjMyLCJsb2dpbl90eXBlIjoxfQ.6tTBYN-_Erbo0BouLpRMHR6ezk10kYEWh80v5VQEpuQ";
+        String k12tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbiI6InRvYl9wYWQiLCJzY2hvb2xfY29kZSI6ImsxMnNjaG9vbF8wMV9kZXYiLCJ1c2VyX2lkIjoxMTA1MywiZXhwIjoxNTE1OTgyMTUwLCJsb2dpbl90eXBlIjoxfQ.CZSudEzg8ThSxDUIlD33d2-mzaRqz1nvkEtGq6vrV3o";
         String schoolCode = "k12school_01_dev";
         SystemShare.setSettingString(mContext,Constant.k12token,k12tokenValue);
         SystemShare.setSettingString(mContext,Constant.k12code,schoolCode);
