@@ -62,7 +62,7 @@ public class CourseStandardController {
                 @Override
                 public void onSuccess(String result_json) {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_success_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_success_MESSAGE);
                         success.obj = result_json;
                         success.sendToTarget();
                     }
@@ -70,7 +70,7 @@ public class CourseStandardController {
                 @Override
                 public void onFalse(String result_json) {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_false_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_false_MESSAGE);
                         success.obj = result_json;
                         success.sendToTarget();
                     }
@@ -78,7 +78,7 @@ public class CourseStandardController {
                 @Override
                 public void onException() {
                     if (null != mMainHandler){
-                        Message success = mMainHandler.obtainMessage(MessageConfig.resource_list_standard_http_exception_MESSAGE);
+                        Message success = mMainHandler.obtainMessage(MessageConfig.course_standard_http_exception_MESSAGE);
                         success.sendToTarget();
                     }
                 }

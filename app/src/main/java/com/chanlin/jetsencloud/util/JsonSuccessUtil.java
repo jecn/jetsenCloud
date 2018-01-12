@@ -115,7 +115,7 @@ public class JsonSuccessUtil {
             tree.setSize(resultsJson.getLong("size"));
             resourceTrees.add(tree);
             //入库
-            DatabaseService.createResourceTree(course_standard_id,tree.getUuid(),tree.getKey(),tree.getTitle(),tree.getSize(),tree.getType(),null);
+            DatabaseService.createResourceTree(course_standard_id,tree.getUuid(),tree.getKey(),tree.getTitle(),tree.getSize(),tree.getType(),"");
         }
         return resourceTrees;
     }
