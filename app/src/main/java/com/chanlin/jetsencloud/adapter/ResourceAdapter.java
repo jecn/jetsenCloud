@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.chanlin.jetsencloud.R;
+import com.chanlin.jetsencloud.controller.ResourceController;
 import com.chanlin.jetsencloud.entity.ResourceTree;
 
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class ResourceAdapter extends BaseAdapter {
     Context mContext;
     LayoutInflater layoutInflater;
     ArrayList<ResourceTree> list = new ArrayList<>();
+    ResourceController resourceController ;
     public ResourceAdapter(Context context, ArrayList<ResourceTree> resourceTreeArrayList){
         mContext = context;
         layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -57,12 +59,12 @@ public class ResourceAdapter extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.item_down_file,parent,false);
             hodler.type_icon = (ImageView) view.findViewById(R.id.type_icon);
             hodler.file_title = (TextView) view.findViewById(R.id.file_title);
-            hodler.file_title = (TextView) view.findViewById(R.id.file_title);
+            hodler.down = (ImageView) view.findViewById(R.id.down);
             view.setTag(hodler);
         }else{
             hodler = (ViewHodler) convertView.getTag();
         }
-        ResourceTree tree = list.get(position);
+        final ResourceTree tree = list.get(position);
         setIcon(tree.getType(),hodler.type_icon);
         hodler.file_title.setText(tree.getTitle());
         if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
@@ -70,6 +72,19 @@ public class ResourceAdapter extends BaseAdapter {
         }else{
             hodler.down.setImageResource(R.mipmap.img_download);
         }
+        //点击下载或者删除
+        hodler.down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
+                    //已下载
+
+                }else{
+                    hodler.down.setImageResource(R.mipmap.img_download);
+                    //未下载，调用下载，并更新数据库
+                }
+            }
+        });
         return view;
     }
     //type //文件类型(1:word 2:PDF 3:PPT 4:Excel 5:图片 6:视频 7:音频 8:flash

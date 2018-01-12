@@ -136,7 +136,7 @@ public final class DatabaseObject {
             values.put(resource_title,title);
             values.put(resource_size,size);
             values.put(resource_type,type);
-            values.put(file_url, file_url);
+            values.put(resource_file_url, file_url);
             return values;
         }
     }
