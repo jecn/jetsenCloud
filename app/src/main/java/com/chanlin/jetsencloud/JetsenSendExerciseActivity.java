@@ -5,10 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -19,28 +17,22 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
-import com.chanlin.jetsencloud.controller.BookController;
-import com.chanlin.jetsencloud.controller.CourseStandardController;
-import com.chanlin.jetsencloud.controller.ResourceController;
+import com.chanlin.jetsencloud.adapter.BooklistViewAdapter;
+import com.chanlin.jetsencloud.adapter.SendExerciseAdapter;
 import com.chanlin.jetsencloud.database.DatabaseService;
 import com.chanlin.jetsencloud.entity.Book;
 import com.chanlin.jetsencloud.entity.CourseStandardTree;
 import com.chanlin.jetsencloud.entity.QuestionPeriod;
-import com.chanlin.jetsencloud.entity.ResourceTree;
 import com.chanlin.jetsencloud.expandable.ExpandView;
 import com.chanlin.jetsencloud.expandable.ExpandablePresenter;
 import com.chanlin.jetsencloud.expandable.FileAdapter;
-import com.chanlin.jetsencloud.fragment.QuestionFragment;
-import com.chanlin.jetsencloud.fragment.ResourceFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +79,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
     private int book_id;
     private String book_name;
 
+//    private SendExerciseAdapter sendExerciseAdapter;
     private ExerciseListViewAdapter exerciseListViewAdapter;
 
     //定义发送消息的接口
@@ -100,6 +93,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jetsen_sendexercise);
+        this.mContext = this;
 
         initView();
         initData();
@@ -152,6 +146,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 //                    questionPeriodList.add(period);
                     list.add("0");
                 }
+                int a = questionPeriodList.size();
                 //发送消息给fragment更新数据
                 //resourceFragment.updataResourceTree(resourceTreeList);
                 //questionFragment.updataQuestionPeriod(questionPeriodList);
@@ -162,7 +157,6 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
                 //刷新 listview
                 exerciseListViewAdapter.notifyDataSetChanged();
-
             }
         });
     }
@@ -190,7 +184,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         send_exercise = (TextView) findViewById(R.id.sendexercise);
         send_exercise.setOnClickListener(this);
         exercise_listview = (ListView) findViewById(R.id.exe_listview);
-        exerciseListViewAdapter = new ExerciseListViewAdapter(this);
+        exerciseListViewAdapter = new ExerciseListViewAdapter(mContext, questionPeriodList, list);
         exercise_listview.setAdapter(exerciseListViewAdapter);
         exercise_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -210,7 +204,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
     private void initPop() {
         view = LayoutInflater.from(this).inflate(R.layout.booklistview, null);
         mlistview = (ListView) view.findViewById(R.id.book_listview);
-        booklistViewAdapter = new BooklistViewAdapter(this);
+        booklistViewAdapter = new BooklistViewAdapter(mContext, mybooks);
         mlistview.setAdapter(booklistViewAdapter);
         mlistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -279,11 +273,17 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
-    private class ExerciseListViewAdapter extends BaseAdapter{
+    private class ExerciseListViewAdapter extends BaseAdapter {
 
+        private Context mContext;
+        private ArrayList<QuestionPeriod> questionPeriodList1 = new ArrayList<QuestionPeriod>();
+        private ArrayList<String> list = new ArrayList<String>();
         private LayoutInflater layoutInflater;
 
-        public ExerciseListViewAdapter(Context context) {
+        public ExerciseListViewAdapter(Context context, ArrayList<QuestionPeriod> questionPeriodList, ArrayList<String> list) {
+            this.mContext = context;
+            this.questionPeriodList1 = questionPeriodList;
+            this.list = list;
             this.layoutInflater = LayoutInflater.from(context);
         }
 
@@ -327,50 +327,6 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         private class ViewHolder {
             private TextView period_name;
             private ImageView imgcheck;
-        }
-    }
-
-    private class BooklistViewAdapter extends BaseAdapter{
-
-        private LayoutInflater layoutInflater;
-
-        public BooklistViewAdapter(Context context) {
-            this.layoutInflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public int getCount() {
-            return mybooks.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return mybooks.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            if (convertView == null) {
-                holder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.booklist_item, null);
-                holder.book_name = (TextView) convertView.findViewById(R.id.name);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            holder.book_name.setText(mybooks.get(position).getName());
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-            private TextView book_name;
         }
     }
 }

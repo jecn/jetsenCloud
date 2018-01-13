@@ -5,35 +5,37 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chanlin.jetsencloud.JetsenSendExerciseActivity;
 import com.chanlin.jetsencloud.R;
+import com.chanlin.jetsencloud.entity.Book;
+
+import java.util.ArrayList;
 
 /**
- * Created by ChanLin on 2018/1/9.
- * jetsenCloud
- * TODO:
+ * Created by Administrator on 2018/1/13.
  */
+public class BooklistViewAdapter extends BaseAdapter {
 
-public class GridViewAdapter extends BaseAdapter {
     private Context mContext;
-    private String[][] courses= null;
+    ArrayList<Book> mybooks = null;//教材列表
     private LayoutInflater layoutInflater;
-    public GridViewAdapter(Context context, String[][] Strs){
+
+    public BooklistViewAdapter(Context context, ArrayList<Book> mybooks) {
         this.mContext = context;
-        this.courses = Strs;
+        this.mybooks = mybooks;
         this.layoutInflater = LayoutInflater.from(context);
     }
+
     @Override
     public int getCount() {
-        return courses.length;
+        return mybooks.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return mybooks.get(position);
     }
 
     @Override
@@ -46,18 +48,18 @@ public class GridViewAdapter extends BaseAdapter {
         ViewHolder holder = null;
         if (convertView == null) {
             holder = new ViewHolder();
-            convertView = layoutInflater.inflate(R.layout.course_item, null);
-            holder.course_name = (TextView) convertView.findViewById(R.id.tv_course_name);
+            convertView = layoutInflater.inflate(R.layout.booklist_item, null);
+            holder.book_name = (TextView) convertView.findViewById(R.id.name);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.course_name.setText(courses[position][1].toString());
+        holder.book_name.setText(mybooks.get(position).getName());
+
         return convertView;
     }
 
     private class ViewHolder {
-        private TextView course_name;
+        private TextView book_name;
     }
-
 }
