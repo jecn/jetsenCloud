@@ -145,6 +145,46 @@ public class DatabaseService {
                     DatabaseObject.ResourceTreeTable.projection,where_cause,
                     where_args,null);
             if (cursor != null && cursor.moveToFirst()) {
+                /*DatabaseUtils.updateRecordFromTable(DatabaseObject.ResourceTree,null,
+                        DatabaseObject.ResourceTreeTable.getContentValues(course_standard_id, uuid, key,title,
+                                size,type,file_url),
+                        where_cause,where_args);
+                Log.i(TAG, "createResourceTree update");*/
+                return true;
+            }else {
+                DatabaseUtils.insertRecordIntoTable(
+                        DatabaseObject.ResourceTreeTable.getContentValues(course_standard_id, uuid, key,title,
+                                size,type,file_url),
+                        DatabaseObject.ResourceTree,null);
+                Log.i(TAG, "createResourceTree insertRecordIntoTable");
+                return true;
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return false;
+    }
+
+
+    /**
+     * 改资源地址
+     */
+    public static boolean updateResourceTree(int course_standard_id, String uuid, String key,
+                                             String title,long size,int type,String file_url){
+        String where_cause = DatabaseObject.ResourceTreeTable.resource_course_standard_id
+                + " =? and "
+                + DatabaseObject.ResourceTreeTable.resource_uuid
+                + " =?";
+        String[] where_args = new String[] {String.valueOf(course_standard_id),uuid};
+        Cursor cursor = null;
+        try {
+            cursor = DatabaseUtils.getRecordsFromTable(DatabaseObject.ResourceTree,null,
+                    DatabaseObject.ResourceTreeTable.projection,where_cause,
+                    where_args,null);
+            if (cursor != null && cursor.moveToFirst()) {
                 DatabaseUtils.updateRecordFromTable(DatabaseObject.ResourceTree,null,
                         DatabaseObject.ResourceTreeTable.getContentValues(course_standard_id, uuid, key,title,
                                 size,type,file_url),
@@ -207,7 +247,7 @@ public class DatabaseService {
     /**
      * 存 课堂-习题课时详情
      */
-    public static boolean createQuestionPeriodDetailTable(int course_standard_id, String uuid, String title,String url){
+    public static boolean createQuestionPeriodDetailTable(int course_standard_id, String uuid, String key,String url){
         String where_cause = DatabaseObject.QuestionPeriodDetailTable.detail_question_period_id
                 + " =? and "
                 + DatabaseObject.QuestionPeriodDetailTable.detail_uuid
@@ -220,13 +260,13 @@ public class DatabaseService {
                     where_args,null);
             if (cursor != null && cursor.moveToFirst()) {
                 DatabaseUtils.updateRecordFromTable(DatabaseObject.QuestionPeriodDetail,null,
-                        DatabaseObject.QuestionPeriodDetailTable.getContentValues(course_standard_id, uuid,title,url),
+                        DatabaseObject.QuestionPeriodDetailTable.getContentValues(course_standard_id, uuid,key,url),
                         where_cause,where_args);
                 Log.i(TAG, "createQuestionPeriodDetailTable update");
                 return true;
             }else {
                 DatabaseUtils.insertRecordIntoTable(
-                        DatabaseObject.QuestionPeriodDetailTable.getContentValues(course_standard_id, uuid,title,url),
+                        DatabaseObject.QuestionPeriodDetailTable.getContentValues(course_standard_id, uuid,key,url),
                         DatabaseObject.QuestionPeriodDetail,null);
                 Log.i(TAG, "createQuestionPeriodDetailTable insertRecordIntoTable");
                 return true;
@@ -433,7 +473,7 @@ public class DatabaseService {
                     where_args, null);
             while(cursor.moveToNext()){
                 QuestionPeriodDetail book = new QuestionPeriodDetail();
-                book.setCourse_standard_id(detail_question_period_id);
+                book.setQuestion_period_id(detail_question_period_id);
                 book.setUuid(cursor.getString(1));
                 book.setKey(cursor.getString(2));
                 book.setUrl(cursor.getString(3));

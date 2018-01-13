@@ -136,7 +136,7 @@ public final class DatabaseObject {
             values.put(resource_title,title);
             values.put(resource_size,size);
             values.put(resource_type,type);
-            values.put(file_url, file_url);
+            values.put(resource_file_url, file_url);
             return values;
         }
     }
@@ -168,7 +168,7 @@ public final class DatabaseObject {
     //11.	课堂-习题课时详情
     public static final String QuestionPeriodDetail = "question_period_detail_table";
     public static final class QuestionPeriodDetailTable{
-        public static final String detail_question_period_id = "course_standard_id";//课标id
+        public static final String detail_question_period_id = "question_period_id";//课标id
         public static final String detail_uuid = "uuid";//习题的uuid
         private static final String detail_key = "key";//课时title
         private static final String detail_file_url = "url";//习题下载后 的json 文件地址
@@ -184,11 +184,11 @@ public final class DatabaseObject {
 
         public static final String DROP_SQL = "drop table if exists " + QuestionPeriodDetail + ";";
 
-        public static ContentValues getContentValues(int course_standard_id, String uuid, String title,String url) {
+        public static ContentValues getContentValues(int question_period_id, String uuid, String key,String url) {
             ContentValues values = new ContentValues();
-            values.put(detail_question_period_id, course_standard_id);
+            values.put(detail_question_period_id, question_period_id);
             values.put(detail_uuid, uuid);
-            values.put(detail_key, title);
+            values.put(detail_key, key);
             values.put(detail_file_url,url);
             return values;
         }

@@ -188,27 +188,21 @@ public class DatabaseProvider extends ContentProvider {
         switch (result) {
             case UserInfo:
                 table = DatabaseObject.UserInfo;
-                where = createWhere(DatabaseObject.UserInfoTable.user_teacher_id, uri);
                 break;
             case Book:
                 table = DatabaseObject.Book;
-                where = createWhere(DatabaseObject.bookTable.course_id, uri);
                 break;
             case CourseStandardTree:
                 table = DatabaseObject.CourseStandardTree;
-                where = createWhere(DatabaseObject.CourseStandardTreeTable.tree_book_id, uri);
                 break;
             case ResourceTree:
                 table = DatabaseObject.ResourceTree;
-                where = createWhere(DatabaseObject.ResourceTreeTable.resource_course_standard_id, uri);
                 break;
             case QuestionPeriod:
                 table = DatabaseObject.QuestionPeriod;
-                where = createWhere(DatabaseObject.QuestionPeriodTable.question_period_course_standard_id, uri);
                 break;
             case QuestionPeriodDetail:
                 table = DatabaseObject.QuestionPeriodDetail;
-                where = createWhere(DatabaseObject.QuestionPeriodDetailTable.detail_question_period_id, uri);
                 break;
             default:
                 throw new IllegalStateException("Unrecognized URI:" + uri);

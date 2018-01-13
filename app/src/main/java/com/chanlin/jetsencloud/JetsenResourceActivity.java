@@ -1,12 +1,17 @@
 package com.chanlin.jetsencloud;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +30,7 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chanlin.jetsencloud.controller.BookController;
 import com.chanlin.jetsencloud.controller.CourseStandardController;
+import com.chanlin.jetsencloud.controller.QuestionController;
 import com.chanlin.jetsencloud.controller.ResourceController;
 import com.chanlin.jetsencloud.database.DatabaseService;
 import com.chanlin.jetsencloud.entity.Book;
@@ -57,7 +63,9 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
     private BookController bookController;//获取教材controller
     private CourseStandardController courseStandardController;//获取课标树controller
     private ResourceController resourceController;//获取资源列表的controller
+    private QuestionController questionController;
 
+    public static boolean mIsGrant = false;//是否授权
     private FrameLayout fl_no_data,frameLayout_content;
     ArrayList<Book> mybooks =null;//教材列表
     Book thisBook = null;//当前选中的教材项
@@ -79,7 +87,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
     int currentIndex=0;
 
     //定义发送消息的接口
-    //private UpdateData updateFragment;
+    private UpdateData updateFragment;
     private ResourceFragment resourceFragment;
     private ArrayList<ResourceTree> resourceTreeList = new ArrayList<>();
     private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
@@ -114,7 +122,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                     try{
                         courseStandardTreeArrayList = JsonSuccessUtil.getCourseStandardTree(thisBook.getId(),(String)msg.obj);
                         //刷新列表数据
-                       // courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
+                        presenter.getFiles(-1,thisBook.getId(),0);
                     }catch(JSONException e){
                         mHandler.sendEmptyMessage(MessageConfig.book_http_exception_MESSAGE);
                     }
@@ -123,7 +131,18 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                     try{
                         resourceTreeList = JsonSuccessUtil.getResourceTreeList(courseStandardTree.getId(),(String)msg.obj);
                         //刷新列表数据
-                        // courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
+                        //发送消息给fragment更新数据
+                        resourceFragment.updataResourceTree(resourceTreeList);
+                    }catch(JSONException e){
+                        mHandler.sendEmptyMessage(MessageConfig.book_http_exception_MESSAGE);
+                    }
+                    break;
+                case MessageConfig.question_period_standard_http_success_MESSAGE:
+                    try{
+                        questionPeriodList = JsonSuccessUtil.getQuestionPeriodList(courseStandardTree.getId(),(String)msg.obj);
+                        //刷新列表数据
+                        //发送消息给fragment更新数据
+                        questionFragment.updataQuestionPeriod(questionPeriodList);
                     }catch(JSONException e){
                         mHandler.sendEmptyMessage(MessageConfig.book_http_exception_MESSAGE);
                     }
@@ -140,6 +159,8 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
         bookController = new BookController(mContext,mHandler);
         courseStandardController = new CourseStandardController(mContext,mHandler);
         resourceController = new ResourceController(mContext,mHandler);
+        questionController = new QuestionController(mContext,mHandler);
+        checkWriteExternalStoragePermission();
         initView();
         initData();
         refreshData();
@@ -206,7 +227,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
             fl_no_data.setVisibility(View.GONE);
             frameLayout_content.setVisibility(View.VISIBLE);
             thisBook = mybooks.get(1);
-           // courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
+            //courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
 
             //列表目录
             presenter.getFiles(-1,thisBook.getId(),0);
@@ -248,7 +269,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                 //网络获取
                 courseStandardTree = entity;
                 resourceController.getResourceList(entity.getId());
-               // questioncon
+                questionController.getQuestionPeriodList(entity.getId());
             }
         });
 
@@ -355,6 +376,36 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                 resetTextView();
                 updateBtnColor();
                 break;
+        }
+    }
+
+        public void checkWriteExternalStoragePermission() {
+            int is_granted = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (PackageManager.PERMISSION_GRANTED != is_granted) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1000);
+            } else {
+                mIsGrant = true;
+            }
+    }
+
+        @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            requestResult(mContext,requestCode,permissions,grantResults);
+
+
+    }
+    public void requestResult(Object obj, int requestCode, String[] permissions, int[] grantResults){
+        List<String> deniedPermissions = new ArrayList<>();
+        for(int i=0; i<grantResults.length; i++){
+            if(grantResults[i] != PackageManager.PERMISSION_GRANTED){
+                deniedPermissions.add(permissions[i]);
+            }
+        }
+        if(deniedPermissions.size() > 0){
+            mIsGrant = false;
+        } else {
+            mIsGrant = true;
         }
     }
 }

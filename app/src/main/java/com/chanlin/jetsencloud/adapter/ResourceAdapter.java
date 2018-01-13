@@ -2,6 +2,9 @@ package com.chanlin.jetsencloud.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.nfc.Tag;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +12,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chanlin.jetsencloud.JetsenResourceActivity;
 import com.chanlin.jetsencloud.R;
+import com.chanlin.jetsencloud.controller.ResourceController;
+import com.chanlin.jetsencloud.database.DatabaseService;
 import com.chanlin.jetsencloud.entity.ResourceTree;
+import com.chanlin.jetsencloud.http.MessageConfig;
+import com.chanlin.jetsencloud.http.OKHttpUtil;
+import com.chanlin.jetsencloud.http.ReqCallBack;
+import com.chanlin.jetsencloud.util.Constant;
+import com.chanlin.jetsencloud.util.SDCardUtils;
+import com.chanlin.jetsencloud.util.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -20,10 +33,12 @@ import java.util.ArrayList;
  * TODO:
  */
 
-public class ResourceAdapter extends BaseAdapter {
+public class ResourceAdapter extends BaseAdapter{
+    private static  final String TAG = "ResourceAdapter";
     Context mContext;
     LayoutInflater layoutInflater;
     ArrayList<ResourceTree> list = new ArrayList<>();
+
     public ResourceAdapter(Context context, ArrayList<ResourceTree> resourceTreeArrayList){
         mContext = context;
         layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -57,12 +72,12 @@ public class ResourceAdapter extends BaseAdapter {
             view = layoutInflater.inflate(R.layout.item_down_file,parent,false);
             hodler.type_icon = (ImageView) view.findViewById(R.id.type_icon);
             hodler.file_title = (TextView) view.findViewById(R.id.file_title);
-            hodler.file_title = (TextView) view.findViewById(R.id.file_title);
+            hodler.down = (ImageView) view.findViewById(R.id.down);
             view.setTag(hodler);
         }else{
             hodler = (ViewHodler) convertView.getTag();
         }
-        ResourceTree tree = list.get(position);
+        final ResourceTree tree = list.get(position);
         setIcon(tree.getType(),hodler.type_icon);
         hodler.file_title.setText(tree.getTitle());
         if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
@@ -70,6 +85,53 @@ public class ResourceAdapter extends BaseAdapter {
         }else{
             hodler.down.setImageResource(R.mipmap.img_download);
         }
+        //点击下载或者删除
+        hodler.down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
+                    //已下载
+                    hodler.down.setImageResource(R.mipmap.img_delete);
+                }else{
+                    hodler.down.setImageResource(R.mipmap.img_download);
+                    //未下载，调用下载，并更新数据库
+                    //动态授权
+                    if (!JetsenResourceActivity.mIsGrant){
+                        ToastUtils.shortToast(mContext,R.string.no_permission);
+                        return;
+                    }
+                    if(SDCardUtils.isSDCardEnable()){
+                        String fileDir = SDCardUtils.getSDCardPath() + SDCardUtils.fileDir;
+                        OKHttpUtil.downLoadFile(Constant.file_download_host + tree.getKey(), fileDir, new ReqCallBack<ResourceTree>() {
+                            @Override
+                            public void successCallBack(File file) {
+                                String filePath = file.getPath();//获取文件下载的路径
+                                //更新下载地址
+                                DatabaseService.updateResourceTree(tree.getCourse_standard_id(),tree.getUuid(),tree.getKey(),tree.getTitle(),tree.getSize(),tree.getType(),filePath);
+                                //更新UI
+
+                                tree.setFile_url(filePath);
+                                hodler.down.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hodler.down.setImageResource(R.mipmap.img_delete);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void failedCallBack() {
+                                //ToastUtils.shortToast(mContext,R.string.download_error);
+
+                            }
+                        });
+                    }else {
+                        ToastUtils.shortToast(mContext,R.string.no_sdcard);
+                    }
+
+                }
+            }
+        });
         return view;
     }
     //type //文件类型(1:word 2:PDF 3:PPT 4:Excel 5:图片 6:视频 7:音频 8:flash
@@ -112,4 +174,6 @@ public class ResourceAdapter extends BaseAdapter {
         ImageView down;
 
     }
+
+
 }
