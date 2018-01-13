@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -35,6 +36,7 @@ public class JetsenMainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.activity_jetsen_main);
         this.mContext = this;
         Intent userIntent = getIntent();
@@ -58,6 +60,8 @@ public class JetsenMainActivity extends AppCompatActivity {
     private TextView tv_user_name;
     private TextView tv_user_school;
     private GridView gv_course;
+    private TextView tv_sendexercise;
+
     private void initView(){
         user_head_iv = (ImageView) findViewById(R.id.user_head_iv);
         tv_user_name = (TextView) findViewById(R.id.tv_user_name);
@@ -66,6 +70,16 @@ public class JetsenMainActivity extends AppCompatActivity {
         GridViewAdapter gridViewAdapter = new GridViewAdapter(mContext,course);
         gv_course.setAdapter(gridViewAdapter);
 
+        tv_sendexercise = (TextView) findViewById(R.id.tv_sendexercise);
+        tv_sendexercise.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击后跳转 传递值到另外一个页面
+                Intent it  = new Intent(JetsenMainActivity.this,JetsenSendExerciseActivity.class);
+                it.putExtra("courceId", 1 + "");
+                JetsenMainActivity.this.startActivity(it);
+            }
+        });
     }
 
     private void initData(){

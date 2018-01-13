@@ -6,4 +6,6 @@
 
     <string name="common_overview">备课课件</string>
     <string name="common_data">习题课</string>
+    <string name="sendexercise_title">发送习题</string>
+    <string name="sendexercise">发送</string>
 </resources>
