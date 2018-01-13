@@ -2,6 +2,7 @@ package com.chanlin.jetsencloud.http;
 
 import android.util.Log;
 
+import com.chanlin.jetsencloud.util.FileUtils;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.OkHttpClient;
@@ -35,12 +36,19 @@ public class OKHttpUtil {
      * @param fileUrl 文件url
      * @param destFileDir 存储目标目录
      */
-    public <T> void downLoadFile(String fileUrl, final String destFileDir, final ReqCallBack<T> callBack) {
-       // final String fileName = MD5.encode(fileUrl);
-        final File file = new File(destFileDir, fileUrl);
-        if (file.exists()) {
-            successCallBack((T) file, callBack);
+    public static <T> void downLoadFile(String fileUrl, final String destFileDir, final ReqCallBack<T> callBack) {
+        final String fileName = fileUrl.substring(fileUrl.lastIndexOf('/')+1);
+        final File file = new File(destFileDir, fileName);
+        /*if (!FileUtils.createOrExistsDir(file)){
+            callBack.failedCallBack();
             return;
+        }*/
+        if (file.exists()) {
+//            successCallBack((T) file, callBack);
+            callBack.successCallBack(file);
+            return;
+        }else {//不存在则创建文件
+            FileUtils.createOrExistsFile(file);
         }
         final Request request = new Request.Builder().url(fileUrl).build();
         final Call call = getInstanceHttpClient().newCall(request);
@@ -48,7 +56,8 @@ public class OKHttpUtil {
             @Override
             public void onFailure(Request request, IOException e) {
                 Log.e(TAG, e.toString());
-                failedCallBack("下载失败", callBack);
+//                failedCallBack("下载失败", callBack);
+                callBack.failedCallBack();
             }
 
             @Override
@@ -69,10 +78,12 @@ public class OKHttpUtil {
                         Log.e(TAG, "current------>" + current);
                     }
                     fos.flush();
-                    successCallBack((T) file, callBack);
+//                    successCallBack((T) file, callBack);
+                    callBack.successCallBack(file);
                 } catch (IOException e) {
                     Log.e(TAG, e.toString());
-                    failedCallBack("下载失败", callBack);
+//                    failedCallBack("下载失败", callBack);
+                    callBack.failedCallBack();
                 } finally {
                     try {
                         if (is != null) {

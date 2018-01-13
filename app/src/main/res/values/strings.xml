@@ -5,5 +5,10 @@
     <string name="http_exception">网络请求失败</string>
 
     <string name="common_overview">备课课件</string>
-    <string name="common_data">习题课</string>
+    <string name="common_data">习题库</string>
+    <!-- 下载-->
+    <string name="no_sdcard">设备没有SDcard！</string>
+    <string name="download_error">文件下载失败！</string>
+    <string name="no_permission">未授予相关权限！</string>
+    <string name="question_period">课时</string>
 </resources>

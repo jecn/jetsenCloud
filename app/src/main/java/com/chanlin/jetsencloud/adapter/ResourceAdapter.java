@@ -2,6 +2,9 @@ package com.chanlin.jetsencloud.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.nfc.Tag;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +12,19 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.chanlin.jetsencloud.JetsenResourceActivity;
 import com.chanlin.jetsencloud.R;
 import com.chanlin.jetsencloud.controller.ResourceController;
+import com.chanlin.jetsencloud.database.DatabaseService;
 import com.chanlin.jetsencloud.entity.ResourceTree;
+import com.chanlin.jetsencloud.http.MessageConfig;
+import com.chanlin.jetsencloud.http.OKHttpUtil;
+import com.chanlin.jetsencloud.http.ReqCallBack;
+import com.chanlin.jetsencloud.util.Constant;
+import com.chanlin.jetsencloud.util.SDCardUtils;
+import com.chanlin.jetsencloud.util.ToastUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -21,11 +33,12 @@ import java.util.ArrayList;
  * TODO:
  */
 
-public class ResourceAdapter extends BaseAdapter {
+public class ResourceAdapter extends BaseAdapter{
+    private static  final String TAG = "ResourceAdapter";
     Context mContext;
     LayoutInflater layoutInflater;
     ArrayList<ResourceTree> list = new ArrayList<>();
-    ResourceController resourceController ;
+
     public ResourceAdapter(Context context, ArrayList<ResourceTree> resourceTreeArrayList){
         mContext = context;
         layoutInflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -78,10 +91,44 @@ public class ResourceAdapter extends BaseAdapter {
             public void onClick(View v) {
                 if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
                     //已下载
-
+                    hodler.down.setImageResource(R.mipmap.img_delete);
                 }else{
                     hodler.down.setImageResource(R.mipmap.img_download);
                     //未下载，调用下载，并更新数据库
+                    //动态授权
+                    if (!JetsenResourceActivity.mIsGrant){
+                        ToastUtils.shortToast(mContext,R.string.no_permission);
+                        return;
+                    }
+                    if(SDCardUtils.isSDCardEnable()){
+                        String fileDir = SDCardUtils.getSDCardPath() + SDCardUtils.fileDir;
+                        OKHttpUtil.downLoadFile(Constant.file_download_host + tree.getKey(), fileDir, new ReqCallBack<ResourceTree>() {
+                            @Override
+                            public void successCallBack(File file) {
+                                String filePath = file.getPath();//获取文件下载的路径
+                                //更新下载地址
+                                DatabaseService.updateResourceTree(tree.getCourse_standard_id(),tree.getUuid(),tree.getKey(),tree.getTitle(),tree.getSize(),tree.getType(),filePath);
+                                //更新UI
+
+                                tree.setFile_url(filePath);
+                                hodler.down.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hodler.down.setImageResource(R.mipmap.img_delete);
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void failedCallBack() {
+                                //ToastUtils.shortToast(mContext,R.string.download_error);
+
+                            }
+                        });
+                    }else {
+                        ToastUtils.shortToast(mContext,R.string.no_sdcard);
+                    }
+
                 }
             }
         });
@@ -127,4 +174,6 @@ public class ResourceAdapter extends BaseAdapter {
         ImageView down;
 
     }
+
+
 }

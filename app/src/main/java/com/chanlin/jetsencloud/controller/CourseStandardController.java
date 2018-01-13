@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
+import com.chanlin.jetsencloud.http.CommonUtils;
 import com.chanlin.jetsencloud.http.HttpCallBack;
 import com.chanlin.jetsencloud.http.MessageConfig;
 import com.chanlin.jetsencloud.http.OKHttpUtil;
@@ -42,6 +43,9 @@ public class CourseStandardController {
      * @param bookId
      */
     public void getCourseStandardList(int bookId){
+        if(!CommonUtils.isNetworkAvailable(mContext)){
+            return;
+        }
             OkHttpClient mOkHttpClient = OKHttpUtil.getInstanceHttpClient();
             String token = SystemShare.getSettingString(mContext,Constant.k12token);
             String code = SystemShare.getSettingString(mContext,Constant.k12code);

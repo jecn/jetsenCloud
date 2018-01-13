@@ -7,17 +7,17 @@ package com.chanlin.jetsencloud.entity;
  */
 
 public class QuestionPeriodDetail {
-    private int course_standard_id;
+    private int question_period_id;
     private String uuid;
     private String key;
     private String url;
 
-    public int getCourse_standard_id() {
-        return course_standard_id;
+    public int getQuestion_period_id() {
+        return question_period_id;
     }
 
-    public void setCourse_standard_id(int course_standard_id) {
-        this.course_standard_id = course_standard_id;
+    public void setQuestion_period_id(int question_period_id) {
+        this.question_period_id = question_period_id;
     }
 
     public String getUuid() {
@@ -47,7 +47,7 @@ public class QuestionPeriodDetail {
     @Override
     public String toString() {
         return "QuestionPeriodDetail{" +
-                "course_standard_id=" + course_standard_id +
+                "question_period_id=" + question_period_id +
                 ", uuid='" + uuid + '\'' +
                 ", key='" + key + '\'' +
                 ", url='" + url + '\'' +
