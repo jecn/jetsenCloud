@@ -5,9 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -63,14 +66,16 @@ public class JetsenMainActivity extends AppCompatActivity {
     private TextView tv_user_school;
     private GridView gv_course;
     private TextView tv_sendexercise;
+    private CourseAdapter courseAdapter;
 
     private void initView(){
         user_head_iv = (ImageView) findViewById(R.id.user_head_iv);
         tv_user_name = (TextView) findViewById(R.id.tv_user_name);
         tv_user_school = (TextView) findViewById(R.id.tv_user_school);
         gv_course = (GridView) findViewById(R.id.gv_course);
-        GridViewAdapter gridViewAdapter = new GridViewAdapter(mContext,course);
-        gv_course.setAdapter(gridViewAdapter);
+//        GridViewAdapter gridViewAdapter = new GridViewAdapter(mContext,course);
+        courseAdapter = new CourseAdapter(this);
+        gv_course.setAdapter(courseAdapter);
 
         tv_sendexercise = (TextView) findViewById(R.id.tv_sendexercise);
         tv_sendexercise.setOnClickListener(new View.OnClickListener() {
@@ -116,6 +121,49 @@ public class JetsenMainActivity extends AppCompatActivity {
             Bundle bundle = data.getExtras();
             String string = bundle.getString("aaa");
             Toast.makeText(this, "发送..." + string, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private class CourseAdapter extends BaseAdapter {
+
+        private LayoutInflater layoutInflater;
+
+        public CourseAdapter(Context context) {
+            this.layoutInflater = LayoutInflater.from(context);
+        }
+
+        @Override
+        public int getCount() {
+            return course.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return course[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder = null;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = layoutInflater.inflate(R.layout.course_item, null);
+                holder.course_name = (TextView) convertView.findViewById(R.id.tv_course_name);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+            holder.course_name.setText(course[position][1].toString());
+            return convertView;
+        }
+
+        private class ViewHolder {
+            private TextView course_name;
         }
     }
 }
