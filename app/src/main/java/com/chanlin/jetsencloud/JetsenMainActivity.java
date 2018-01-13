@@ -1,5 +1,6 @@
 package com.chanlin.jetsencloud;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chanlin.jetsencloud.adapter.GridViewAdapter;
 import com.chanlin.jetsencloud.util.Constant;
@@ -77,7 +79,7 @@ public class JetsenMainActivity extends AppCompatActivity {
                 //点击后跳转 传递值到另外一个页面
                 Intent it  = new Intent(JetsenMainActivity.this,JetsenSendExerciseActivity.class);
                 it.putExtra("courceId", 1 + "");
-                JetsenMainActivity.this.startActivity(it);
+                JetsenMainActivity.this.startActivityForResult(it, 1001);
             }
         });
     }
@@ -107,4 +109,13 @@ public class JetsenMainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            Bundle bundle = data.getExtras();
+            String string = bundle.getString("aaa");
+            Toast.makeText(this, "发送..." + string, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

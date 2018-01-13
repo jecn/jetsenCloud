@@ -1,5 +1,6 @@
 package com.chanlin.jetsencloud;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -145,10 +146,10 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                 //resourceTreeList = DatabaseService.findResourceTreeList(entity.getId());
                 questionPeriodList = DatabaseService.findQuestionPeriodList(entity.getId());
                 list.clear();
-                for (int i = 0; i< 3; i++){
-                    QuestionPeriod period = new QuestionPeriod();
-                    period.setTitle("课时1-" + i);
-                    questionPeriodList.add(period);
+                for (int i = 0; i< questionPeriodList.size(); i++){
+//                    QuestionPeriod period = new QuestionPeriod();
+//                    period.setTitle("课时1-" + i);
+//                    questionPeriodList.add(period);
                     list.add("0");
                 }
                 //发送消息给fragment更新数据
@@ -252,7 +253,13 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                         str = str + " ," + s;
                     }
                 }
-                Toast.makeText(this, "发送..." + str , Toast.LENGTH_SHORT).show();
+
+                Intent intent = getIntent();
+                setResult(Activity.RESULT_OK, intent);//返回页面1
+                Bundle bundle = intent.getExtras();
+                bundle.putString("aaa", str);//添加要返回给页面1的数据
+                intent.putExtras(bundle);
+                finish();
                 break;
             case R.id.tv_book_name: // popupWindow弹框
                 if (popupWindow.isShowing()) {
@@ -263,11 +270,6 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                 }
                 break;
         }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
