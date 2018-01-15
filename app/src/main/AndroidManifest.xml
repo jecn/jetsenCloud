@@ -30,6 +30,8 @@
             android:screenOrientation="landscape"></activity>
         <activity android:name=".JetsenSendExerciseActivity"
             android:screenOrientation="landscape"></activity>
+        <activity android:name=".JetsenPrepareResourceActivity"
+            android:screenOrientation="landscape"></activity>
 
         <provider
             android:authorities="ChanLin"

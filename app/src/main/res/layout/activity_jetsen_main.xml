@@ -91,4 +91,14 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gv_course" />
 
+    <TextView
+        android:id="@+id/tv_prepare_resource"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="30dp"
+        android:text="@string/prepare_resource"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_sendexercise" />
+
 </android.support.constraint.ConstraintLayout>

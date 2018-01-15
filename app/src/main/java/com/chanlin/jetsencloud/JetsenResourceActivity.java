@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -19,15 +20,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
+import com.chanlin.jetsencloud.adapter.BooklistViewAdapter;
 import com.chanlin.jetsencloud.controller.BookController;
 import com.chanlin.jetsencloud.controller.CourseStandardController;
 import com.chanlin.jetsencloud.controller.QuestionController;
@@ -93,6 +101,20 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
     private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
     private QuestionFragment questionFragment;
 
+    //popupWindow弹出框
+    private RelativeLayout relative_booklist;
+    private TextView text_book_name;
+    private ImageView img_booklist;
+    private ListView mlistview;
+    private View view;
+    private BooklistViewAdapter booklistViewAdapter;
+    private PopupWindow popupWindow;
+    private int popX; // 横坐标
+
+    private int course_id;
+    private int book_id;
+    private String book_name;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -154,6 +176,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.activity_jetsen_resource);
         mContext = this;
         bookController = new BookController(mContext,mHandler);
@@ -164,6 +187,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
         initView();
         initData();
         refreshData();
+        initPop();
     }
     private void initView(){
         TextView mTvTitle = (TextView) findViewById(R.id.title_text);
@@ -203,6 +227,12 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
 
         mTabLineIv = (ImageView) this.findViewById(R.id.id_tab_line_iv);
 
+        relative_booklist = (RelativeLayout) findViewById(R.id.relative_booklist);
+        text_book_name = (TextView) findViewById(R.id.tv_book_name);
+        text_book_name.setOnClickListener(this);
+
+        img_booklist = (ImageView) findViewById(R.id.img_booklist);
+
         initTabLineWidth();
         initListener();
     }
@@ -211,10 +241,11 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
      */
     private void initTabLineWidth() {
 
-        screenWidth = viewPager.getWidth();
+//        screenWidth = viewPager.getWidth();
+        screenWidth = getScreenWidth(this) / 2;
         LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) mTabLineIv
                 .getLayoutParams();
-        lp.width = screenWidth / 3;
+        lp.width = screenWidth / 2;
         mTabLineIv.setLayoutParams(lp);
     }
     private void initData(){
@@ -240,10 +271,31 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
         //frameLayout_content.setVisibility(View.GONE);
         //如果没获取到则要到网络上获取数据
         bookController.getBookList(mHandler,courseId);
-
-
     }
 
+    private void initPop() {
+        view = LayoutInflater.from(this).inflate(R.layout.booklistview, null);
+        mlistview = (ListView) view.findViewById(R.id.book_listview);
+        booklistViewAdapter = new BooklistViewAdapter(mContext, mybooks);
+        mlistview.setAdapter(booklistViewAdapter);
+        mlistview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                popupWindow.dismiss();
+                img_booklist.setImageResource(R.mipmap.img_booklist_right);
+                course_id = mybooks.get(position).getCourse_id();
+                book_id = mybooks.get(position).getId();
+                book_name = mybooks.get(position).getName();
+                text_book_name.setText(book_name);
+                Log.i("onActivityResult", " course_id=" + course_id + " book_id=" + book_id + " book_name" + book_name);
+            }
+        });
+        popupWindow = new PopupWindow(view, getScreenWidth(this) / 4, ViewGroup.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable()); // 解决PopupWindow 设置setOutsideTouchable无效
+        popupWindow.setOutsideTouchable(false);
+        popupWindow.setFocusable(false);
+        popX = getScreenWidth(this) / 8;
+    }
 
     private void initListener(){
         fileRv.addOnItemTouchListener(new OnItemClickListener() {
@@ -296,24 +348,24 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                  */
                 if (currentIndex == 0 && position == 0)// 0->1
                 {
-                    lp.leftMargin = (int) (offset * (screenWidth * 1.0 / 3) + currentIndex
-                            * (screenWidth / 3));
+                    lp.leftMargin = (int) (offset * (screenWidth * 1.0 / 2) + currentIndex
+                            * (screenWidth / 2));
 
                 } else if (currentIndex == 1 && position == 0) // 1->0
                 {
                     lp.leftMargin = (int) (-(1 - offset)
-                            * (screenWidth * 1.0 / 3) + currentIndex
-                            * (screenWidth / 3));
+                            * (screenWidth * 1.0 / 2) + currentIndex
+                            * (screenWidth / 2));
 
                 } else if (currentIndex == 1 && position == 1) // 1->2
                 {
-                    lp.leftMargin = (int) (offset * (screenWidth * 1.0 / 3) + currentIndex
-                            * (screenWidth / 3));
+                    lp.leftMargin = (int) (offset * (screenWidth * 1.0 / 2) + currentIndex
+                            * (screenWidth / 2));
                 } else if (currentIndex == 2 && position == 1) // 2->1
                 {
                     lp.leftMargin = (int) (-(1 - offset)
-                            * (screenWidth * 1.0 / 3) + currentIndex
-                            * (screenWidth / 3));
+                            * (screenWidth * 1.0 / 2) + currentIndex
+                            * (screenWidth / 2));
                 }
                 mTabLineIv.setLayoutParams(lp);
             }
@@ -347,6 +399,13 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
         }
     }
 
+    /**
+     * 获取屏幕宽度(px)
+     */
+    public static int getScreenWidth(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels;
+    }
+
 
     private void updateBtnColor(){
         switch (currentIndex) {
@@ -375,6 +434,16 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
                 currentIndex = 1;
                 resetTextView();
                 updateBtnColor();
+                break;
+            case R.id.tv_book_name: // popupWindow弹框
+                if (popupWindow.isShowing()) {
+                    popupWindow.dismiss();
+                    img_booklist.setImageResource(R.mipmap.img_booklist_right);
+                } else {
+                    img_booklist.setImageResource(R.mipmap.img_booklist_bottom);
+                    popupWindow.showAsDropDown(relative_booklist, popX, 5);
+//                    popupWindow.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, 0);
+                }
                 break;
         }
     }
