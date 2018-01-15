@@ -171,7 +171,7 @@ public final class DatabaseObject {
         public static final String detail_question_period_id = "question_period_id";//课标id
         public static final String detail_uuid = "uuid";//习题的uuid
         private static final String detail_key = "key";//课时title
-        private static final String detail_file_url = "url";//习题下载后 的json 文件地址
+        public static final String detail_file_url = "url";//习题下载后 的json 文件地址
         public static final String[] projection = new String[]{
                 detail_question_period_id,detail_uuid,detail_key,detail_file_url
         };

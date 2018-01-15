@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -14,9 +15,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -25,14 +26,20 @@ import android.widget.TextView;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.listener.OnItemClickListener;
 import com.chanlin.jetsencloud.adapter.BooklistViewAdapter;
-import com.chanlin.jetsencloud.adapter.SendExerciseAdapter;
+import com.chanlin.jetsencloud.adapter.QuestionContentListViewAdapter;
+import com.chanlin.jetsencloud.adapter.QuestionPeriodGridViewAdapter;
 import com.chanlin.jetsencloud.database.DatabaseService;
 import com.chanlin.jetsencloud.entity.Book;
 import com.chanlin.jetsencloud.entity.CourseStandardTree;
+import com.chanlin.jetsencloud.entity.QuestionContent;
 import com.chanlin.jetsencloud.entity.QuestionPeriod;
+import com.chanlin.jetsencloud.entity.QuestionPeriodDetail;
 import com.chanlin.jetsencloud.expandable.ExpandView;
 import com.chanlin.jetsencloud.expandable.ExpandablePresenter;
 import com.chanlin.jetsencloud.expandable.FileAdapter;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,14 +54,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
     private Context mContext;
     private String courseId;
-   // private BookController bookController;//获取教材controller
-    //private CourseStandardController courseStandardController;//获取课标树controller
-    //private ResourceController resourceController;//获取资源列表的controller
 
-    private ListView exercise_listview;
-    private int period_click_item = -1; // 点击item位置
-    private ArrayList<String> list = new ArrayList<String>();
-   // ArrayList periodlist = new ArrayList();
 
     private FrameLayout fl_no_data, frameLayout_content;
     ArrayList<Book> mybooks = null;//教材列表
@@ -79,15 +79,21 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
     private int book_id;
     private String book_name;
 
-//    private SendExerciseAdapter sendExerciseAdapter;
-    private ExerciseListViewAdapter exerciseListViewAdapter;
 
     //定义发送消息的接口
-    //private UpdateData updateFragment;
-    //private ResourceFragment resourceFragment;
-    //private ArrayList<ResourceTree> resourceTreeList = new ArrayList<>();
-    private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
-    //private QuestionFragment questionFragment;
+    //课时列表
+   private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
+    private ArrayList<QuestionPeriodDetail> questionContentList = new ArrayList<>();
+    private LinearLayout ll_question_view;//右侧习题显示的view
+    private GridView gv_question_period_list;//课时 列表
+    private QuestionPeriodGridViewAdapter gridViewAdapter;
+    private ListView lv_question_detial_list;//问题列表
+    private QuestionContentListViewAdapter listViewAdapter;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,8 +103,12 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
         initView();
         initData();
-        setlistview();
+        setGridView();
         initPop();
+        initListener();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void initView() {
@@ -117,8 +127,10 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         relative_booklist = (RelativeLayout) findViewById(R.id.relative_booklist);
         text_book_name = (TextView) findViewById(R.id.tv_book_name);
         text_book_name.setOnClickListener(this);
+        send_exercise = (TextView) findViewById(R.id.sendexercise);
+        send_exercise.setOnClickListener(this);
 
-        initListener();
+
     }
 
     private void initListener() {
@@ -139,24 +151,34 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                 //拿到数据后传递到Fragment里面去
                 //resourceTreeList = DatabaseService.findResourceTreeList(entity.getId());
                 questionPeriodList = DatabaseService.findQuestionPeriodList(entity.getId());
-                list.clear();
-                for (int i = 0; i< questionPeriodList.size(); i++){
-//                    QuestionPeriod period = new QuestionPeriod();
-//                    period.setTitle("课时1-" + i);
-//                    questionPeriodList.add(period);
-                    list.add("0");
-                }
-                int a = questionPeriodList.size();
-                //发送消息给fragment更新数据
-                //resourceFragment.updataResourceTree(resourceTreeList);
-                //questionFragment.updataQuestionPeriod(questionPeriodList);
-                //网络获取
-                courseStandardTree = entity;
-                //resourceController.getResourceList(entity.getId());
-                // questioncon
 
-                //刷新 listview
-                exerciseListViewAdapter.notifyDataSetChanged();
+
+                courseStandardTree = entity;
+                //刷新课时数据
+                gridViewAdapter.updateAdapter(questionPeriodList);
+                if (questionPeriodList != null && questionPeriodList.size() > 0) {
+                    ll_question_view.setVisibility(View.VISIBLE);
+                    questionContentList = DatabaseService.findQuestionPeriodDetailListWhereUrlNotNull(questionPeriodList.get(0).getId());
+                    listViewAdapter.updateList(questionContentList);
+                }else{
+                    ll_question_view.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
+
+        gv_question_period_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //点击时那个？ 刷新listview
+                gv_question_period_list.setFocusable(false);
+                parent.setFocusable(true);
+                //
+
+                QuestionPeriod questionPeriod = questionPeriodList.get(position);
+                //数据库查询 已经下载了 的 问题详情
+                questionContentList = DatabaseService.findQuestionPeriodDetailListWhereUrlNotNull(questionPeriod.getId());
+                listViewAdapter.updateList(questionContentList);
+
             }
         });
     }
@@ -179,26 +201,17 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
     }
 
-    private void setlistview() {
+    private void setGridView() {
         //右侧内容
-        send_exercise = (TextView) findViewById(R.id.sendexercise);
-        send_exercise.setOnClickListener(this);
-        exercise_listview = (ListView) findViewById(R.id.exe_listview);
-        exerciseListViewAdapter = new ExerciseListViewAdapter(mContext, questionPeriodList, list);
-        exercise_listview.setAdapter(exerciseListViewAdapter);
-        exercise_listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                period_click_item = position;
-                if (list.get(position).equals("0")) {
-                    list.set(position, "1");
-                } else {
-                    list.set(position, "0");
-                }
+        ll_question_view = (LinearLayout) findViewById(R.id.ll_question_view);
+        gv_question_period_list = (GridView) findViewById(R.id.gv_question_period_list);
+        lv_question_detial_list = (ListView) findViewById(R.id.lv_question_detial_list);
+        gridViewAdapter = new QuestionPeriodGridViewAdapter(mContext, questionPeriodList);
+        gv_question_period_list.setAdapter(gridViewAdapter);
 
-                exerciseListViewAdapter.notifyDataSetChanged();
-            }
-        });
+        //setListView();
+        listViewAdapter = new QuestionContentListViewAdapter(mContext, questionContentList);
+        lv_question_detial_list.setAdapter(listViewAdapter);
     }
 
     private void initPop() {
@@ -234,19 +247,21 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.title_back:
                 finish();
                 break;
             case R.id.sendexercise:
+                //判断是否选择了题目,没选择则提示选择
+
                 String s = "";
                 String str = "";
-                for (int i = 0;i < list.size(); i++){
+                /*for (int i = 0;i < list.size(); i++){
                     if (list.get(i).equals("1")){
                         s = questionPeriodList.get(i).getTitle();
                         str = str + " ," + s;
                     }
-                }
+                }*/
 
                 Intent intent = getIntent();
                 setResult(Activity.RESULT_OK, intent);//返回页面1
@@ -273,60 +288,43 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         return context.getResources().getDisplayMetrics().widthPixels;
     }
 
-    private class ExerciseListViewAdapter extends BaseAdapter {
+    @Override
+    public void onStart() {
+        super.onStart();
 
-        private Context mContext;
-        private ArrayList<QuestionPeriod> questionPeriodList1 = new ArrayList<QuestionPeriod>();
-        private ArrayList<String> list = new ArrayList<String>();
-        private LayoutInflater layoutInflater;
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "JetsenSendExercise Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.chanlin.jetsencloud/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
 
-        public ExerciseListViewAdapter(Context context, ArrayList<QuestionPeriod> questionPeriodList, ArrayList<String> list) {
-            this.mContext = context;
-            this.questionPeriodList1 = questionPeriodList;
-            this.list = list;
-            this.layoutInflater = LayoutInflater.from(context);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
 
-        @Override
-        public int getCount() {
-            return questionPeriodList.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return questionPeriodList.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder = null;
-            if (convertView == null) {
-                holder = new ViewHolder();
-                convertView = layoutInflater.inflate(R.layout.exercise_list_item, null);
-                holder.period_name = (TextView) convertView.findViewById(R.id.period_name);
-                holder.imgcheck = (ImageView) convertView.findViewById(R.id.imgbtn_check);
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-            if (list.get(position).equals("1")){
-                holder.imgcheck.setImageResource(R.mipmap.period_check_on);
-            } else {
-                holder.imgcheck.setImageResource(R.mipmap.period_check_off);
-            }
-            holder.period_name.setText(questionPeriodList.get(position).getTitle());
-
-            return convertView;
-        }
-
-        private class ViewHolder {
-            private TextView period_name;
-            private ImageView imgcheck;
-        }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "JetsenSendExercise Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.chanlin.jetsencloud/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }

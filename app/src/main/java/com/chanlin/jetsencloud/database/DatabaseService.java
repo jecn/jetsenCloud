@@ -492,4 +492,42 @@ public class DatabaseService {
     }
 
 
+    /**'
+     * 查找 已经下载了的文件
+     * @param detail_question_period_id
+     * @return
+     */
+    public static ArrayList<QuestionPeriodDetail> findQuestionPeriodDetailListWhereUrlNotNull(int detail_question_period_id){
+        ArrayList<QuestionPeriodDetail> bookList = new ArrayList<QuestionPeriodDetail>();
+        LogUtil.showInfo(TAG,"findBookList detail_question_period_id="+detail_question_period_id);
+        String where_cause = DatabaseObject.QuestionPeriodDetailTable.detail_question_period_id
+                + " =? and "
+                + DatabaseObject.QuestionPeriodDetailTable.detail_file_url
+                + " is not null";
+        String[] where_args = new String[] { String.valueOf(detail_question_period_id)};
+        Cursor cursor=null;
+        try {
+            cursor=DatabaseUtils.getRecordsFromTable(DatabaseObject.QuestionPeriodDetail,
+                    null, DatabaseObject.QuestionPeriodDetailTable.projection, where_cause,
+                    where_args, null);
+            while(cursor.moveToNext()){
+                QuestionPeriodDetail book = new QuestionPeriodDetail();
+                book.setQuestion_period_id(detail_question_period_id);
+                book.setUuid(cursor.getString(1));
+                book.setKey(cursor.getString(2));
+                book.setUrl(cursor.getString(3));
+                bookList.add(book);
+                LogUtil.showInfo("database", "findQuestionPeriodDetailList:"+bookList.toString());
+            }
+            LogUtil.showInfo("database","findQuestionPeriodDetailList over:");
+        } catch (Exception e) {
+            e.printStackTrace();
+            LogUtil.showInfo("database","findQuestionPeriodDetailList exception:");
+        }finally{
+            LogUtil.showInfo("database","findQuestionPeriodDetailList finally:");
+            if(cursor != null ) cursor.close();
+        }
+        return bookList;
+    }
+
 }

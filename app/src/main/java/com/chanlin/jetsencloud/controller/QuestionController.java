@@ -1,6 +1,7 @@
 package com.chanlin.jetsencloud.controller;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -42,6 +43,7 @@ public class QuestionController {
     private Handler mMainHandler;
     private String mRemoteAddress;
 
+    private int downloadedCount = 0;//已经下载的数量
     public QuestionController(Context context, Handler handler,String urlHost){
         this.mContext = context;
         this.mMainHandler = handler;
@@ -119,7 +121,7 @@ public class QuestionController {
         Headers gd = Headers.of();
 
         final Request request = new Request.Builder()
-                .url(Constant.Host+"course_standard_id="+course_standard_id+"&question_period_id="+question_period_id)
+                .url(Constant.Host+"?course_standard_id="+course_standard_id+"&question_period_id="+question_period_id)
                 .addHeader(Constant.k12appKey,Constant.k12appValue)
                 .addHeader(Constant.k12avKey,Constant.k12avValue)
                 .addHeader(Constant.k12url,Constant.code_question_period_details)
@@ -139,6 +141,7 @@ public class QuestionController {
                     success.obj = result_json;
                     success.sendToTarget();*/
                     //获取成功，接下来 循环  解析json 下载
+                    downloadedCount = 0;//请求服务器成功清除原来的换成题目个数
                     try {
                         downloadJson(question_period_id,result_json);
                     } catch (JSONException e) {
@@ -173,9 +176,11 @@ public class QuestionController {
         //ArrayList<QuestionPeriodDetail> periodDetails = new ArrayList<>();
         JSONObject dataJson = new JSONObject(jstr);
         if (!dataJson.has("list"))
-            return ;
+            return;
         JSONArray resultsArrayJson = dataJson.getJSONArray("list");
-        for (int a = 0; a < resultsArrayJson.length(); a++) {
+        final int count = resultsArrayJson.length();
+
+        for (int a = 0; a < count; a++) {
             JSONObject resultsJson = resultsArrayJson.getJSONObject(a);
             final QuestionPeriodDetail detail = new QuestionPeriodDetail();
             detail.setQuestion_period_id(question_period_id);
@@ -190,6 +195,14 @@ public class QuestionController {
                     DatabaseService.createQuestionPeriodDetailTable(detail.getQuestion_period_id(),detail.getUuid(),detail.getKey(),filePath);
 
                     //更新UI
+                    downloadedCount++;
+                    if (count <= downloadedCount){
+                        //表示全部下载完成
+                        if (null != mMainHandler){
+                            Message success = mMainHandler.obtainMessage(MessageConfig.question_period_details_http_success_MESSAGE);
+                            success.sendToTarget();
+                        }
+                    }
                 }
 
                 @Override

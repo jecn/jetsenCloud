@@ -14,6 +14,7 @@ import com.chanlin.jetsencloud.JetsenResourceActivity;
 import com.chanlin.jetsencloud.R;
 import com.chanlin.jetsencloud.controller.QuestionController;
 import com.chanlin.jetsencloud.entity.QuestionPeriod;
+import com.chanlin.jetsencloud.http.MessageConfig;
 import com.chanlin.jetsencloud.util.SDCardUtils;
 import com.chanlin.jetsencloud.util.ToastUtils;
 
@@ -36,6 +37,10 @@ public class QuestionAdapter extends BaseAdapter {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case MessageConfig.question_period_details_http_success_MESSAGE:
+                    ToastUtils.shortToast(mContext,"下载完成！");
+                   // list = questionController.getQuestionPeriodList();
+                    break;
 
             }
         }

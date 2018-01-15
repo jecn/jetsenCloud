@@ -1,5 +1,9 @@
 package com.chanlin.jetsencloud.util;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Base64;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -14,6 +18,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 import java.io.OutputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -1182,6 +1187,30 @@ public class FileUtils {
         return null;
     }
 
+    public static String getJsonFile(String jsonFilePath) {
+        StringBuffer sb = new StringBuffer();
+        String content = null;
+        try {
+            FileReader fileReader = new FileReader(new File(jsonFilePath));
+            BufferedReader bufReader = new BufferedReader(fileReader);
+            LineNumberReader reader = new LineNumberReader(bufReader);
+            String line;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append(System.getProperty("line.separator"));
+                }
+                reader.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            content = sb.toString();
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+            return null;
+        }
+        return content;
+    }
     /**
      * 获取全路径中的最长目录
      *
@@ -1281,5 +1310,18 @@ public class FileUtils {
         int lastSep = filePath.lastIndexOf(File.separator);
         if (lastPoi == -1 || lastSep >= lastPoi) return "";
         return filePath.substring(lastPoi + 1);
+    }
+
+    public static Bitmap stringtoBitmap(String string){
+        Bitmap bitmap = null;
+        try{
+            byte[] bitmapArray;
+            bitmapArray = Base64.decode(string,Base64.DEFAULT);
+            bitmap = BitmapFactory.decodeByteArray(bitmapArray,0,bitmapArray.length);
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 }
