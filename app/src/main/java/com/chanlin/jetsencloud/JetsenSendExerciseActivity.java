@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.FrameLayout;
 import android.widget.GridView;
@@ -82,13 +83,16 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
 
     //定义发送消息的接口
     //课时列表
-   private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
+    private ArrayList<QuestionPeriod> questionPeriodList = new ArrayList<>();
     private ArrayList<QuestionPeriodDetail> questionContentList = new ArrayList<>();
+    private ArrayList<QuestionPeriodDetail> addList = new ArrayList<>();//加载到选中列表中的对象
+    private int addType = 0;//选中题目的类型，一次只能选一种类型的题目
     private LinearLayout ll_question_view;//右侧习题显示的view
     private GridView gv_question_period_list;//课时 列表
     private QuestionPeriodGridViewAdapter gridViewAdapter;
     private ListView lv_question_detial_list;//问题列表
     private QuestionContentListViewAdapter listViewAdapter;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -98,6 +102,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);//去掉信息栏
         setContentView(R.layout.activity_jetsen_sendexercise);
         this.mContext = this;
 
@@ -137,6 +142,8 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         fileRv.addOnItemTouchListener(new OnItemClickListener() {
             @Override
             public void onSimpleItemClick(BaseQuickAdapter adapter, View view, int position) {
+                //清空选中的题目
+                addList.clear();
                 CourseStandardTree entity = (CourseStandardTree) adapter.getItem(position);
                 if (entity.isExpand) {
                     adapter.collapse(position);
@@ -170,15 +177,33 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //点击时那个？ 刷新listview
-                gv_question_period_list.setFocusable(false);
-                parent.setFocusable(true);
+                //gv_question_period_list.setFocusable(false);
+                //parent.setFocusable(true);
                 //
 
                 QuestionPeriod questionPeriod = questionPeriodList.get(position);
                 //数据库查询 已经下载了 的 问题详情
                 questionContentList = DatabaseService.findQuestionPeriodDetailListWhereUrlNotNull(questionPeriod.getId());
+                //清空选中 的题目
+                addList.clear();
+
                 listViewAdapter.updateList(questionContentList);
 
+            }
+        });
+        lv_question_detial_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //点击某个listview的item时 选中或者取消选中
+                QuestionPeriodDetail detail = questionContentList.get(position);
+                if (detail.ischecked()){
+                    detail.setIschecked(false);
+                    addList.remove(detail);
+                }else {
+                    detail.setIschecked(true);
+                    addList.add(detail);
+                }
+                listViewAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -253,20 +278,16 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                 break;
             case R.id.sendexercise:
                 //判断是否选择了题目,没选择则提示选择
+                if (addList == null && addList.size() < 1){
+                    //没选中题目
+                }else{
 
-                String s = "";
-                String str = "";
-                /*for (int i = 0;i < list.size(); i++){
-                    if (list.get(i).equals("1")){
-                        s = questionPeriodList.get(i).getTitle();
-                        str = str + " ," + s;
-                    }
-                }*/
-
+                }
                 Intent intent = getIntent();
                 setResult(Activity.RESULT_OK, intent);//返回页面1
                 Bundle bundle = intent.getExtras();
-                bundle.putString("aaa", str);//添加要返回给页面1的数据
+                bundle.putInt("course_standard_id",courseStandardTree.getId());
+                bundle.putSerializable("questionList", addList);//添加要返回给页面1的数据
                 intent.putExtras(bundle);
                 finish();
                 break;

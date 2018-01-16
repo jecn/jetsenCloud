@@ -17,11 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chanlin.jetsencloud.adapter.GridViewAdapter;
+import com.chanlin.jetsencloud.entity.QuestionPeriodDetail;
 import com.chanlin.jetsencloud.util.Constant;
 import com.chanlin.jetsencloud.util.LogUtil;
 import com.chanlin.jetsencloud.util.SystemShare;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
+
+import java.util.ArrayList;
 
 public class JetsenMainActivity extends AppCompatActivity {
     private static final String TAG = "JetsenMainActivity";
@@ -128,8 +131,10 @@ public class JetsenMainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
-            String string = bundle.getString("aaa");
-            Toast.makeText(this, "发送..." + string, Toast.LENGTH_SHORT).show();
+            int course_standard_id = bundle.getInt("course_standard_id");
+            ArrayList<QuestionPeriodDetail> details = (ArrayList<QuestionPeriodDetail>) bundle.getSerializable("questionList");
+
+            Toast.makeText(this, "发送...course_standard_id=" + course_standard_id+"\n"+details.toString(), Toast.LENGTH_SHORT).show();
         }
         if (requestCode == 1002 && resultCode == Activity.RESULT_OK){
             Bundle bundle = data.getExtras();

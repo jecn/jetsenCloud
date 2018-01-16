@@ -22,6 +22,6 @@
             android:layout_marginLeft="5dp"
             android:text="课程"
             android:textColor="@color/common_title_bg"
-            android:textSize="20sp" />
+            android:textSize="@dimen/motion_position_text_size" />
     </LinearLayout>
 </LinearLayout>

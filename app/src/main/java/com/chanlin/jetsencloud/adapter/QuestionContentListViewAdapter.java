@@ -113,7 +113,11 @@ public class QuestionContentListViewAdapter extends BaseAdapter {
 
             }
         }
-        hodler.down.setImageResource(R.mipmap.period_check_off);
+        if (detail.ischecked()){
+            hodler.down.setImageResource(R.mipmap.period_check_on);
+        }else{
+            hodler.down.setImageResource(R.mipmap.period_check_off);
+        }
         return view;
     }
     class ViewHodler{

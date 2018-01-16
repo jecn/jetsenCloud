@@ -1,16 +1,27 @@
 package com.chanlin.jetsencloud.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by ChanLin on 2018/1/8.
  * jetsenCloud
  * TODO:
  */
 
-public class QuestionPeriodDetail {
+public class QuestionPeriodDetail implements Serializable{
     private int question_period_id;
     private String uuid;
     private String key;
     private String url;
+    private boolean ischecked;//发送的是否被选中
+
+    public boolean ischecked() {
+        return ischecked;
+    }
+
+    public void setIschecked(boolean ischecked) {
+        this.ischecked = ischecked;
+    }
 
     public int getQuestion_period_id() {
         return question_period_id;
