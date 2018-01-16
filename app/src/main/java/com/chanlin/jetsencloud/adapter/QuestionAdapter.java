@@ -77,7 +77,7 @@ public class QuestionAdapter extends BaseAdapter {
         final ViewHodler hodler;
         if (convertView == null){
             hodler = new ViewHodler();
-            view = layoutInflater.inflate(R.layout.item_down_file,parent,false);
+            view = layoutInflater.inflate(R.layout.item_down_question,parent,false);
             hodler.file_title = (TextView) view.findViewById(R.id.file_title);
             hodler.down = (ImageView) view.findViewById(R.id.down);
             view.setTag(hodler);

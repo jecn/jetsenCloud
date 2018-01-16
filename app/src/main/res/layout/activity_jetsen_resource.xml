@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white"
     tools:context="com.chanlin.jetsencloud.JetsenResourceActivity">
 
     <include layout="@layout/layout_title"></include>
@@ -68,8 +67,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorTitle" />
+                    android:layout_height="0.1dp"
+                    android:background="@color/motion_detail_position_text" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/fileRv"
@@ -78,9 +77,9 @@
             </LinearLayout>
 
             <View
-                android:layout_width="1dp"
+                android:layout_width="0.1dp"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimaryDark"></View>
+                android:background="@color/motion_detail_position_text"></View>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -92,8 +91,8 @@
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/colorTitle" />
+                    android:layout_height="0.1dp"
+                    android:background="@color/motion_detail_position_text" />
 
                 <com.chanlin.jetsencloud.view.CustomViewPager
                     android:id="@+id/motion_view_pager"

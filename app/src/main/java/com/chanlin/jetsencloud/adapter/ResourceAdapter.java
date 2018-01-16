@@ -8,6 +8,9 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LinearInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -91,9 +94,17 @@ public class ResourceAdapter extends BaseAdapter{
             public void onClick(View v) {
                 if(tree.getFile_url()  != null && !"".equals(tree.getFile_url())){
                     //已下载
-                    hodler.down.setImageResource(R.mipmap.img_delete);
-                }else{
+                    tree.setFile_url("");
                     hodler.down.setImageResource(R.mipmap.img_download);
+                }else{
+                    hodler.down.setImageResource(R.mipmap.img_loading);
+                    Animation animation = AnimationUtils.loadAnimation(mContext, R.anim.loading_animation);
+                    LinearInterpolator lin = new LinearInterpolator();
+                    animation.setInterpolator(lin);
+                    if (animation != null){
+                        hodler.down.startAnimation(animation);
+                    }
+//                    hodler.down.setImageResource(R.mipmap.img_download);
                     //未下载，调用下载，并更新数据库
                     //动态授权
                     if (!JetsenResourceActivity.mIsGrant){
@@ -114,6 +125,7 @@ public class ResourceAdapter extends BaseAdapter{
                                 hodler.down.post(new Runnable() {
                                     @Override
                                     public void run() {
+                                        hodler.down.clearAnimation();
                                         hodler.down.setImageResource(R.mipmap.img_delete);
                                     }
                                 });
@@ -122,7 +134,13 @@ public class ResourceAdapter extends BaseAdapter{
                             @Override
                             public void failedCallBack() {
                                 //ToastUtils.shortToast(mContext,R.string.download_error);
-
+                                hodler.down.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        hodler.down.clearAnimation();
+                                        hodler.down.setImageResource(R.mipmap.img_download);
+                                    }
+                                });
                             }
                         });
                     }else {

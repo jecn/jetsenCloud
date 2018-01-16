@@ -6,7 +6,7 @@
 
 	<ListView
 		android:id="@+id/lv_question"
-		android:divider="@color/common_title_bg"
+		android:divider="@color/motion_detail_position_text"
 		android:dividerHeight="1px"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"></ListView>
