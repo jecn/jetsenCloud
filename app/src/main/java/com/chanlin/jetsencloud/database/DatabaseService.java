@@ -132,7 +132,7 @@ public class DatabaseService {
     /**
      * 存资源列表数据
      */
-    public static boolean createResourceTree(int course_standard_id, String uuid, String key,
+    public static String createResourceTree(int course_standard_id, String uuid, String key,
                                              String title,long size,int type,String file_url){
         String where_cause = DatabaseObject.ResourceTreeTable.resource_course_standard_id
                 + " =? and "
@@ -150,14 +150,14 @@ public class DatabaseService {
                                 size,type,file_url),
                         where_cause,where_args);
                 Log.i(TAG, "createResourceTree update");*/
-                return true;
+                return cursor.getString(6);//把URL返回回去
             }else {
                 DatabaseUtils.insertRecordIntoTable(
                         DatabaseObject.ResourceTreeTable.getContentValues(course_standard_id, uuid, key,title,
                                 size,type,file_url),
                         DatabaseObject.ResourceTree,null);
                 Log.i(TAG, "createResourceTree insertRecordIntoTable");
-                return true;
+                return file_url;
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -165,7 +165,7 @@ public class DatabaseService {
             if (cursor != null)
                 cursor.close();
         }
-        return false;
+        return file_url;
     }
 
 
