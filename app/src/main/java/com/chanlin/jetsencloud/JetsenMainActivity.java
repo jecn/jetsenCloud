@@ -65,7 +65,7 @@ public class JetsenMainActivity extends AppCompatActivity {
     private TextView tv_user_name;
     private TextView tv_user_school;
     private GridView gv_course;
-    private TextView tv_sendexercise;
+    private TextView tv_sendexercise, tv_prepare_resource;
     private GridViewAdapter gridViewAdapter;
 
     private void initView(){
@@ -84,6 +84,16 @@ public class JetsenMainActivity extends AppCompatActivity {
                 Intent it  = new Intent(JetsenMainActivity.this,JetsenSendExerciseActivity.class);
                 it.putExtra("courceId", 1 + "");
                 JetsenMainActivity.this.startActivityForResult(it, 1001);
+            }
+        });
+        tv_prepare_resource = (TextView) findViewById(R.id.tv_prepare_resource);
+        tv_prepare_resource.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //点击后跳转 传递值到另外一个页面
+                Intent it  = new Intent(JetsenMainActivity.this,JetsenPrepareResourceActivity.class);
+                it.putExtra("courceId", 1 + "");
+                JetsenMainActivity.this.startActivityForResult(it, 1002);
             }
         });
     }
@@ -120,6 +130,11 @@ public class JetsenMainActivity extends AppCompatActivity {
             Bundle bundle = data.getExtras();
             String string = bundle.getString("aaa");
             Toast.makeText(this, "发送..." + string, Toast.LENGTH_SHORT).show();
+        }
+        if (requestCode == 1002 && resultCode == Activity.RESULT_OK){
+            Bundle bundle = data.getExtras();
+            String string = bundle.getSerializable("resourceTreeList").toString();
+            Toast.makeText(this, "发送..." + "  " +string, Toast.LENGTH_SHORT).show();
         }
     }
 

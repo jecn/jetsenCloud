@@ -1,12 +1,14 @@
 package com.chanlin.jetsencloud.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by ChanLin on 2018/1/8.
  * jetsenCloud
  * TODO:
  */
 
-public class ResourceTree {
+public class ResourceTree implements Serializable{
     private int course_standard_id;
     private  String uuid;
     private String key;
