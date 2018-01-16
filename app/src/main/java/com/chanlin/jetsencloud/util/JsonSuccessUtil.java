@@ -122,9 +122,11 @@ public class JsonSuccessUtil {
             tree.setKey(resultsJson.getString("key"));
             tree.setTitle(resultsJson.getString("title"));
             tree.setSize(resultsJson.getLong("size"));
+
+            //入库,如果数据库已经存在，则返回这条数据的 文件地址
+            String url = DatabaseService.createResourceTree(course_standard_id, tree.getUuid(), tree.getKey(), tree.getTitle(), tree.getSize(), tree.getType(), "");
+            tree.setFile_url(url);
             resourceTrees.add(tree);
-            //入库
-            DatabaseService.createResourceTree(course_standard_id, tree.getUuid(), tree.getKey(), tree.getTitle(), tree.getSize(), tree.getType(), "");
         }
         return resourceTrees;
     }
