@@ -1,4 +1,3 @@
-/*
 package com.chanlin.jetsencloud;
 
 import android.app.Application;
@@ -10,13 +9,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 
-*/
 /**
  * Created by ChanLin on 2018/1/9.
  * jetsenCloud
  * TODO:
- *//*
-
+ */
 
 public class JetsenApplication extends Application {
 
@@ -39,4 +36,3 @@ public class JetsenApplication extends Application {
         ImageLoader.getInstance().init(config.build());
     }
 }
-*/

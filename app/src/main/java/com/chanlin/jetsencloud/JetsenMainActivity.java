@@ -70,7 +70,7 @@ public class JetsenMainActivity extends AppCompatActivity {
          */
 
         //Constant.k12tokenValue = bd.getString(Constant.k12token);
-        host = bd.getString("api_url");
+      /*  host = bd.getString("api_url");
         avatar = bd.getString("avatar");
         name = bd.getString("user_name");
         school_name = bd.getString("school_name");
@@ -82,8 +82,8 @@ public class JetsenMainActivity extends AppCompatActivity {
         for (int i = 0 ; i < course_ids.length; i ++){
             course[i][0] = course_ids[i];
             course[i][1] = course_names[i];
-        }
-      /*  school_name = "K12开发学校01（高中）";
+        }*/
+        school_name = "K12开发学校01（高中）";
         name = "张飞";
         token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbiI6InRvYl9wYWQiLCJzY2hvb2xfY29kZSI6ImsxMnNjaG9vbF8wMV9kZXYiLCJ1c2VyX2lkIjoxMTAyNCwiZXhwIjoxNTE2NDMxODU5LCJsb2dpbl90eXBlIjoxfQ.9ImuBQoXK-QQ-WPRUpP7VCuxdAzgSqMRJN3d1rj8bPc";
         schoolCode = "k12school_01_dev";
@@ -91,7 +91,7 @@ public class JetsenMainActivity extends AppCompatActivity {
 //        avatar = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515480046265&di=cfb78a8d2e029c15e8ba0e138991587f&imgtype=0&src=http%3A%2F%2Favatar.wshang.com%2F151214%2F1450077753_x.jpg";
         avatar = "";
         host = "http://dev.approute.kai12.cn/api/route";
-        file_host = "http://121.41.99.232:50001/";*/
+        file_host = "http://121.41.99.232:50001/";
 
         SystemShare.setSettingString(mContext,Constant.Host,host);
         SystemShare.setSettingString(mContext,Constant.file_download_host,file_host);
