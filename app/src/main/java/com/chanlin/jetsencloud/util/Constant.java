@@ -8,9 +8,11 @@ package com.chanlin.jetsencloud.util;
 
 public class Constant {
 
-    public static final String Host = "http://dev.approute.kai12.cn/api/route";
+    //http://dev.approute.kai12.cn/api/route
+    public static final String Host = "host";//开发版的host地址
 
-    public static final String file_download_host = "http://121.41.99.232:50001/";
+    //http://121.41.99.232:50001/
+    public static final String file_download_host = "file_download_host";
 
     public static final String k12appKey = "k12app";
     public static final String k12appValue = "external";

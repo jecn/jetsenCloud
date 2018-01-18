@@ -25,6 +25,7 @@ import com.chanlin.jetsencloud.http.OKHttpUtil;
 import com.chanlin.jetsencloud.http.ReqCallBack;
 import com.chanlin.jetsencloud.util.Constant;
 import com.chanlin.jetsencloud.util.SDCardUtils;
+import com.chanlin.jetsencloud.util.SystemShare;
 import com.chanlin.jetsencloud.util.ToastUtils;
 
 import java.io.File;
@@ -113,7 +114,8 @@ public class ResourceAdapter extends BaseAdapter{
                     }
                     if(SDCardUtils.isSDCardEnable()){
                         String fileDir = SDCardUtils.getSDCardPath() + SDCardUtils.fileDir;
-                        OKHttpUtil.downLoadFile(Constant.file_download_host + tree.getKey(), fileDir, new ReqCallBack<ResourceTree>() {
+                        String file_download_host = SystemShare.getSettingString(mContext,Constant.file_download_host);
+                        OKHttpUtil.downLoadFile(file_download_host + tree.getKey(), fileDir, new ReqCallBack<ResourceTree>() {
                             @Override
                             public void successCallBack(File file) {
                                 String filePath = file.getPath();//获取文件下载的路径

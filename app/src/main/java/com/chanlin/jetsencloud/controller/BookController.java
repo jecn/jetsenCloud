@@ -24,16 +24,12 @@ import com.squareup.okhttp.Request;
 public class BookController {
     private Context mContext;
     private Handler mMainHandler;
-    private String mRemoteAddress;
+    private String Host ;
 
-
-    public BookController(Context context,Handler handler, String urlHost){
+    public BookController(Context context, Handler handler){
+        Host = SystemShare.getSettingString(context,Constant.Host);
         this.mContext = context;
         this.mMainHandler = handler;
-        this.mRemoteAddress = urlHost;
-    }
-    public BookController(Context context, Handler handler){
-        this(context,handler, Constant.Host);
     }
 
     //get请求
@@ -49,7 +45,7 @@ public class BookController {
             Headers gd = Headers.of();
 
             final Request request = new Request.Builder()
-                    .url(Constant.Host+"?course_id="+bookId)
+                    .url(Host+"?course_id="+bookId)
                     .addHeader(Constant.k12appKey,Constant.k12appValue)
                     .addHeader(Constant.k12avKey,Constant.k12avValue)
                     .addHeader(Constant.k12url,Constant.code_book_list)

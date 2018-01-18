@@ -257,7 +257,7 @@ public class JetsenResourceActivity extends FragmentActivity implements ExpandVi
         if(mybooks != null && mybooks.size() > 0){
             fl_no_data.setVisibility(View.GONE);
             frameLayout_content.setVisibility(View.VISIBLE);
-            thisBook = mybooks.get(1);
+            thisBook = mybooks.get(0);
             //courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
 
             //列表目录

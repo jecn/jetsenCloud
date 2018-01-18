@@ -25,14 +25,11 @@ import com.squareup.okhttp.Request;
 public class ResourceController {
     private Context mContext;
     private Handler mMainHandler;
-    private String mRemoteAddress;
-    public ResourceController(Context context, Handler handler,String urlHost){
+    private String Host;
+    public ResourceController(Context context, Handler handler){
+        Host = SystemShare.getSettingString(context,Constant.Host);
         this.mContext = context;
         this.mMainHandler = handler;
-        this.mRemoteAddress = urlHost;
-    }
-    public ResourceController(Context context, Handler handler){
-        this(context,handler, Constant.Host);
     }
     /**
      * 网络获取资源信息
@@ -49,7 +46,7 @@ public class ResourceController {
         Headers gd = Headers.of();
 
         final Request request = new Request.Builder()
-                .url(Constant.Host+"?course_standard_id="+course_standard_id)
+                .url(Host+"?course_standard_id="+course_standard_id)
                 .addHeader(Constant.k12appKey,Constant.k12appValue)
                 .addHeader(Constant.k12avKey,Constant.k12avValue)
                 .addHeader(Constant.k12url,Constant.code_resource_list)

@@ -38,6 +38,7 @@ import com.chanlin.jetsencloud.entity.QuestionPeriodDetail;
 import com.chanlin.jetsencloud.expandable.ExpandView;
 import com.chanlin.jetsencloud.expandable.ExpandablePresenter;
 import com.chanlin.jetsencloud.expandable.FileAdapter;
+import com.chanlin.jetsencloud.util.ToastUtils;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -217,7 +218,7 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
         if (mybooks != null && mybooks.size() > 0) {
             fl_no_data.setVisibility(View.GONE);
             frameLayout_content.setVisibility(View.VISIBLE);
-            thisBook = mybooks.get(1);
+            thisBook = mybooks.get(0);
             // courseStandardTreeArrayList = DatabaseService.findCourseStandardTreeList(thisBook.getId());
 
             //列表目录
@@ -278,18 +279,20 @@ public class JetsenSendExerciseActivity extends FragmentActivity implements Expa
                 break;
             case R.id.sendexercise:
                 //判断是否选择了题目,没选择则提示选择
-                if (addList == null && addList.size() < 1){
+                if (addList == null || addList.size() < 1){
                     //没选中题目
+                    ToastUtils.shortToast(mContext,R.string.no_question_list);
+                    finish();
                 }else{
-
+                    Intent intent = getIntent();
+                    setResult(Activity.RESULT_OK, intent);//返回页面1
+                    Bundle bundle = intent.getExtras();
+                    bundle.putInt("course_standard_id",courseStandardTree.getId());
+                    bundle.putSerializable("questionList", addList);//添加要返回给页面1的数据
+                    intent.putExtras(bundle);
+                    finish();
                 }
-                Intent intent = getIntent();
-                setResult(Activity.RESULT_OK, intent);//返回页面1
-                Bundle bundle = intent.getExtras();
-                bundle.putInt("course_standard_id",courseStandardTree.getId());
-                bundle.putSerializable("questionList", addList);//添加要返回给页面1的数据
-                intent.putExtras(bundle);
-                finish();
+
                 break;
             case R.id.tv_book_name: // popupWindow弹框
                 if (popupWindow.isShowing()) {

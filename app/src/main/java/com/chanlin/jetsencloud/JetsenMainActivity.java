@@ -32,10 +32,15 @@ public class JetsenMainActivity extends AppCompatActivity {
      * 测试账号密码：
      *  szcsx     707851
      */
+    private String host;
     private Context mContext;
-    private String name;
-    private String school_name;
-    private static String[][] course = new String[][]{{"1","语文"},{"2","数学"},{"3","英语"}};
+    private String name;//姓名
+    private String avatar;//头像
+    private String school_name;//学校名字
+    private String schoolCode;//学校id
+    private String token;//token
+    private static String[][] course;//带的科目
+    private String file_host;//文件下载的host地址
     /*
     *    {"code":0,"data":{"teacher_id":10040,"name":"深圳向","sex":1,"avatar":"","school_name":"K12开发学校01（高中）",
     *       "class":[{"id":3,"name":"(3)班","grade_name":"高一年级","course":[{"id":1,"name":"语文"}]},
@@ -49,14 +54,48 @@ public class JetsenMainActivity extends AppCompatActivity {
         this.mContext = this;
         Intent userIntent = getIntent();
         Bundle bd = userIntent.getExtras();
+        /**
+         extras.putString("api_url", getServerAPI());
+         extras.putString("user_id", getUserID());
+         extras.putString("user_name", getAlias());
+         extras.putString("avatar", getPhoto());
+         extras.putString("school_code", getSchoolID());
+         extras.putString("school_name", getSchoolName());
+         extras.putString("teacher_id", getTeacherID());
+         extras.putString("file", getDownloadUrl());
+         extras.putString("file_up", getUploadUrl());
+         extras.putString("token", getAccessToken());
+         extras.putStringArray("course_ids", ids);
+         extras.putStringArray("course_names", names);
+         */
+
         //Constant.k12tokenValue = bd.getString(Constant.k12token);
-        //name = bd.getString("name");
-        //school_name = bd.getString("school_name");
-        school_name = "K12开发学校01（高中）";
+        host = bd.getString("api_url");
+        avatar = bd.getString("avatar");
+        name = bd.getString("user_name");
+        school_name = bd.getString("school_name");
+        schoolCode = bd.getString("school_code");
+        token = bd.getString("token");
+        file_host = bd.getString("file");
+        String[] course_ids = bd.getStringArray("course_ids");
+        String[] course_names = bd.getStringArray("course_names");
+        for (int i = 0 ; i < course_ids.length; i ++){
+            course[i][0] = course_ids[i];
+            course[i][1] = course_names[i];
+        }
+      /*  school_name = "K12开发学校01（高中）";
         name = "张飞";
-        String k12tokenValue = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbiI6InRvYl9wYWQiLCJzY2hvb2xfY29kZSI6ImsxMnNjaG9vbF8wMV9kZXYiLCJ1c2VyX2lkIjoxMTA1MywiZXhwIjoxNTE2MjQ0NDMzLCJsb2dpbl90eXBlIjoxfQ.ENLfuEo7SWoQubL5ZTCr2pu-LLOGvS597kFz1iZCEMk";
-        String schoolCode = "k12school_01_dev";
-        SystemShare.setSettingString(mContext,Constant.k12token,k12tokenValue);
+        token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcHBsaWNhdGlvbiI6InRvYl9wYWQiLCJzY2hvb2xfY29kZSI6ImsxMnNjaG9vbF8wMV9kZXYiLCJ1c2VyX2lkIjoxMTAyNCwiZXhwIjoxNTE2NDMxODU5LCJsb2dpbl90eXBlIjoxfQ.9ImuBQoXK-QQ-WPRUpP7VCuxdAzgSqMRJN3d1rj8bPc";
+        schoolCode = "k12school_01_dev";
+        course = new String[][]{{"1","语文"},{"2","数学"},{"3","英语"}};
+//        avatar = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515480046265&di=cfb78a8d2e029c15e8ba0e138991587f&imgtype=0&src=http%3A%2F%2Favatar.wshang.com%2F151214%2F1450077753_x.jpg";
+        avatar = "";
+        host = "http://dev.approute.kai12.cn/api/route";
+        file_host = "http://121.41.99.232:50001/";*/
+
+        SystemShare.setSettingString(mContext,Constant.Host,host);
+        SystemShare.setSettingString(mContext,Constant.file_download_host,file_host);
+        SystemShare.setSettingString(mContext,Constant.k12token,token);
         SystemShare.setSettingString(mContext,Constant.k12code,schoolCode);
         initView();
         initData();
@@ -85,7 +124,7 @@ public class JetsenMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //点击后跳转 传递值到另外一个页面
                 Intent it  = new Intent(JetsenMainActivity.this,JetsenSendExerciseActivity.class);
-                it.putExtra("courceId", 1 + "");
+                it.putExtra("courceId", 2 + "");
                 JetsenMainActivity.this.startActivityForResult(it, 1001);
             }
         });
@@ -95,7 +134,7 @@ public class JetsenMainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 //点击后跳转 传递值到另外一个页面
                 Intent it  = new Intent(JetsenMainActivity.this,JetsenPrepareResourceActivity.class);
-                it.putExtra("courceId", 1 + "");
+                it.putExtra("courceId", 2 + "");
                 JetsenMainActivity.this.startActivityForResult(it, 1002);
             }
         });
@@ -109,8 +148,8 @@ public class JetsenMainActivity extends AppCompatActivity {
                 .showImageOnFail(R.mipmap.ic_launcher)
                 .cacheInMemory(true)
                 .cacheOnDisk(true).considerExifParams(true).build();
-        String url = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1515480046265&di=cfb78a8d2e029c15e8ba0e138991587f&imgtype=0&src=http%3A%2F%2Favatar.wshang.com%2F151214%2F1450077753_x.jpg";
-        ImageLoader.getInstance().displayImage(url,user_head_iv,options);
+
+        ImageLoader.getInstance().displayImage(avatar,user_head_iv,options);
     }
     private static void initListener(final JetsenMainActivity jetsenMainActivity){
         jetsenMainActivity.gv_course.setOnItemClickListener(new AdapterView.OnItemClickListener() {

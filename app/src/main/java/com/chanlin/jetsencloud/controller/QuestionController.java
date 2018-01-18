@@ -41,16 +41,14 @@ import java.util.ArrayList;
 public class QuestionController {
     private Context mContext;
     private Handler mMainHandler;
-    private String mRemoteAddress;
-
+    private String Host;
+    private String file_download_host;
     private int downloadedCount = 0;//已经下载的数量
-    public QuestionController(Context context, Handler handler,String urlHost){
+    public QuestionController(Context context, Handler handler){
+        Host = SystemShare.getSettingString(context,Constant.Host);
+        file_download_host = SystemShare.getSettingString(context,Constant.file_download_host);
         this.mContext = context;
         this.mMainHandler = handler;
-        this.mRemoteAddress = urlHost;
-    }
-    public QuestionController(Context context, Handler handler){
-        this(context,handler, Constant.Host);
     }
 
     /**
@@ -68,7 +66,7 @@ public class QuestionController {
         Headers gd = Headers.of();
 
         final Request request = new Request.Builder()
-                .url(Constant.Host+"?course_standard_id="+course_standard_id)
+                .url(Host+"?course_standard_id="+course_standard_id)
                 .addHeader(Constant.k12appKey,Constant.k12appValue)
                 .addHeader(Constant.k12avKey,Constant.k12avValue)
                 .addHeader(Constant.k12url,Constant.code_question_period_list)
@@ -121,7 +119,7 @@ public class QuestionController {
         Headers gd = Headers.of();
 
         final Request request = new Request.Builder()
-                .url(Constant.Host+"?course_standard_id="+course_standard_id+"&question_period_id="+question_period_id)
+                .url(Host+"?course_standard_id="+course_standard_id+"&question_period_id="+question_period_id)
                 .addHeader(Constant.k12appKey,Constant.k12appValue)
                 .addHeader(Constant.k12avKey,Constant.k12avValue)
                 .addHeader(Constant.k12url,Constant.code_question_period_details)
@@ -187,7 +185,7 @@ public class QuestionController {
             detail.setKey(resultsJson.getString("key"));
             detail.setUuid(resultsJson.getString("uuid"));
             String fileDir = SDCardUtils.getSDCardPath() + SDCardUtils.questionJsonFile;
-            OKHttpUtil.downLoadFile(Constant.file_download_host + detail.getKey(), fileDir, new ReqCallBack<QuestionPeriodDetail>() {
+            OKHttpUtil.downLoadFile(file_download_host + detail.getKey(), fileDir, new ReqCallBack<QuestionPeriodDetail>() {
                 @Override
                 public void successCallBack(File file) {
                     String filePath = file.getPath();//获取文件下载的路径
